@@ -11,10 +11,15 @@ import {
 import { buildStoryPart1, BW } from './story-diagram.js';
 import { buildStoryPart2 } from './story-diagram-more.js';
 import { buildBoundary, mark } from './boundary-diagram.js';
-import { buildScenes, CHAPTER_COUNT } from './scenes.js';
+import { buildScenes } from './scenes.js';
 
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+/* One column: the diagram sits on top, and the text reads below it. */
+const NARROW = window.matchMedia('(width <= 820px)');
 const FACTS_PATH = '/data/cq-mev-facts.json';
+/* The header (or any listener) learns the current chapter from these document events. */
+const CHAPTER_EVENT = 'anatomy-story:chapter';
+const QUERY_EVENT = 'anatomy-story:query';
 
 async function loadFacts() {
   const base = (window.hlx && window.hlx.codeBasePath) || '';
@@ -56,7 +61,6 @@ export default async function decorate(block) {
   const prev = h('button', { type: 'button', class: 'as-nav', 'aria-label': 'Previous step' }, bar, '‹');
   const next = h('button', { type: 'button', class: 'as-nav', 'aria-label': 'Next step' }, bar, '›');
   const whereEl = h('p', { class: 'as-where', 'aria-live': 'polite' }, bar);
-  const chaptersEl = h('ol', { class: 'as-chapters' }, bar);
   const plate = h('div', { class: 'as-plate' }, stage);
   const capEl = h('div', { class: 'as-caption' }, stage);
   const legendEl = h('div', { class: 'as-legend' }, stage);
@@ -147,7 +151,7 @@ export default async function decorate(block) {
     bandRects: {}, arrFrom: {}, places: [], rel: {}, addedIn: {},
   };
   const state = {
-    beat: -1, pinned: null, scene: null, release: 0, built: false, inView: false,
+    beat: -1, pinned: null, scene: null, release: 0, built: false, inView: false, reading: false,
   };
   let scenes = pre;
   let storySvg = null;
@@ -251,8 +255,28 @@ export default async function decorate(block) {
 
   let navigating = false;
   let navTimer = 0;
-  const chapterBtns = [];
   const chapterStart = (ch) => beats.findIndex((b) => b.ch === ch);
+  let told = '';
+
+  /* Tell listeners the current chapter (its first beat) and if the reader is in the story. */
+  function announce() {
+    const b = beats[state.beat];
+    if (!b) return;
+    const detail = {
+      ch: b.ch,
+      id: beats[chapterStart(b.ch)].id,
+      title: chapterTitle[b.ch] || `Chapter ${b.ch}`,
+      active: state.reading,
+    };
+    const key = `${detail.id}|${detail.active}`;
+    if (key === told) return;
+    told = key;
+    document.dispatchEvent(new CustomEvent(CHAPTER_EVENT, { detail }));
+  }
+  document.addEventListener(QUERY_EVENT, () => {
+    told = '';
+    announce();
+  });
 
   function activate(i, scroll) {
     const ix = Math.max(0, Math.min(beats.length - 1, i));
@@ -272,48 +296,59 @@ export default async function decorate(block) {
     let where = `${b.ch} · ${(b.group && groupTitle[b.group]) || chapterTitle[b.ch] || `Chapter ${b.ch}`}`;
     if (b.group) where += b.last ? ' · where it stops' : ` · step ${b.stepIx} of ${groupCount[b.group]}`;
     whereEl.textContent = where;
-    chapterBtns.forEach((btn) => btn.setAttribute('aria-current', +btn.dataset.ch === b.ch ? 'step' : 'false'));
     prev.disabled = ix === 0;
     next.disabled = ix === beats.length - 1;
     // Write the deep link only while the reader is in the story, so a first load keeps the hero.
     if ((scroll || state.inView) && window.location.hash !== `#${b.id}`) {
       window.history.replaceState(null, '', `#${b.id}`);
     }
+    announce();
     if (scroll) {
       navigating = true;
       clearTimeout(navTimer);
-      beatEls[ix].scrollIntoView({ block: 'center', behavior: REDUCED.matches ? 'auto' : 'smooth' });
+      beatEls[ix].scrollIntoView({ block: NARROW.matches ? 'start' : 'center', behavior: REDUCED.matches ? 'auto' : 'smooth' });
       navTimer = setTimeout(() => { navigating = false; }, REDUCED.matches ? 300 : 2500);
     }
   }
 
-  for (let c = 1; c <= CHAPTER_COUNT; c += 1) {
-    const ch = c;
-    if (chapterStart(ch) >= 0) {
-      const title = chapterTitle[ch] || `Chapter ${ch}`;
-      const li = h('li', null, chaptersEl);
-      const btn = h('button', {
-        type: 'button', class: 'as-ch', 'aria-label': `Chapter ${ch}: ${title}`, title, 'data-ch': String(ch),
-      }, li, String(ch));
-      btn.addEventListener('click', () => activate(chapterStart(ch), true));
-      chapterBtns.push(btn);
-    }
-  }
   prev.addEventListener('click', () => activate(state.beat - 1, true));
   next.addEventListener('click', () => activate(state.beat + 1, true));
 
-  const io = new IntersectionObserver((entries) => {
+  /* The active beat crosses the middle of the reading area (below the diagram when narrow). */
+  const onBeats = (entries) => {
     if (navigating) return;
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
       const i = +en.target.getAttribute('data-i');
       if (i !== state.beat) activate(i, false);
     });
-  }, { rootMargin: '-48% 0px -48% 0px', threshold: 0 });
-  beatEls.forEach((el) => io.observe(el));
+  };
+  let io;
+  const observeBeats = () => {
+    if (io) io.disconnect();
+    const rootMargin = NARROW.matches ? '-77% 0px -21% 0px' : '-48% 0px -48% 0px';
+    io = new IntersectionObserver(onBeats, { rootMargin, threshold: 0 });
+    beatEls.forEach((el) => io.observe(el));
+  };
+  observeBeats();
+  NARROW.addEventListener('change', observeBeats);
   new IntersectionObserver((entries) => {
     entries.forEach((en) => { state.inView = en.isIntersecting; });
   }).observe(narrative);
+  /* Reading: the middle of the viewport is inside the beats (first top to last end). */
+  const middle = new IntersectionObserver((entries) => {
+    const mid = window.innerHeight / 2;
+    entries.forEach((en) => {
+      const i = +en.target.getAttribute('data-i');
+      const r = en.boundingClientRect;
+      const above = i === 0 && r.top > mid;
+      const past = i === beats.length - 1 && r.bottom < mid;
+      if (en.isIntersecting) state.reading = true;
+      else if (above || past) state.reading = false;
+    });
+    announce();
+  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+  beatEls.forEach((el) => middle.observe(el));
   window.addEventListener('scrollend', () => { navigating = false; });
   window.addEventListener('hashchange', () => {
     const i = beats.findIndex((b) => `#${b.id}` === window.location.hash);
@@ -323,6 +358,7 @@ export default async function decorate(block) {
   document.addEventListener('keydown', (ev) => {
     if (!state.inView) return;
     const t = ev.target;
+    if (t && t.closest && t.closest('header, footer')) return;
     if (ev.key === 'Escape') {
       if (state.pinned) {
         state.pinned.classList.remove('pinned');
@@ -341,7 +377,7 @@ export default async function decorate(block) {
       return;
     }
     if (ev.altKey || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
-    if (t && (t.closest('input, textarea, select, [contenteditable="true"]') || t.closest('header'))) return;
+    if (t && t.closest('input, textarea, select, [contenteditable="true"]')) return;
     if (ev.key === 'ArrowRight') {
       ev.preventDefault();
       activate(state.beat + 1, true);

@@ -245,10 +245,10 @@
 .anatomy-story .as-stage {
   box-sizing: border-box;
   position: sticky;
-  top: 0;
+  top: var(--as-top);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - var(--as-top));
   padding: 14px 0 12px;
 }
 
@@ -259,8 +259,7 @@
   min-height: 34px;
 }
 
-.anatomy-story .as-nav,
-.anatomy-story .as-ch {
+.anatomy-story .as-nav {
   margin: 0;
   padding: 0;
   border: 1px solid var(--as-line);
@@ -269,9 +268,6 @@
   color: var(--as-ink);
   font: inherit;
   cursor: pointer;
-}
-
-.anatomy-story .as-nav {
   width: 32px;
   height: 30px;
   font-size: 18px;
@@ -283,8 +279,7 @@
   cursor: default;
 }
 
-.anatomy-story .as-nav:hover:not(:disabled),
-.anatomy-story .as-ch:hover {
+.anatomy-story .as-nav:hover:not(:disabled) {
   border-color: var(--as-ink);
 }
 
@@ -297,27 +292,6 @@
   font-weight: 600;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.anatomy-story .as-chapters {
-  display: flex;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.anatomy-story .as-ch {
-  width: 26px;
-  height: 26px;
-  font-size: 12px;
-  color: var(--as-muted);
-}
-
-.anatomy-story .as-ch[aria-current='step'] {
-  border-color: var(--as-ink);
-  background: var(--as-ink);
-  color: var(--as-paper);
 }
 
 .anatomy-story .as-plate {
@@ -1223,12 +1197,6 @@
   }
 }
 
-@media (width <= 899px) {
-  .anatomy-story .as-stage {
-    top: var(--as-top);
-  }
-}
-
 @media (width <= 820px) {
   .anatomy-story {
     width: auto;
@@ -1248,10 +1216,6 @@
     background: var(--as-paper);
   }
 
-  .anatomy-story .as-chapters {
-    display: none;
-  }
-
   .anatomy-story .as-caption {
     height: 64px;
   }
@@ -1267,6 +1231,9 @@
   .anatomy-story .beat {
     min-height: 48vh;
     padding-left: 14px;
+
+    /* lands under the sticky diagram; adds to the page's scroll-padding-top (header) */
+    scroll-margin-top: calc(52vh - 4px);
   }
 
   .anatomy-story .beat.step {

@@ -11,8 +11,7 @@ const QUESTIONS = { 'slow-after-deploy': 'slow', 'package-uninstall': 'uninstall
 const Q6 = ['frame', 'band:*', 'bandsub', 'chip:*', 'r:pulse', 'r:console', 'r:catalogs', 'r:diffs'];
 const X_ALL = ['x:*'];
 
-export const CHAPTER_COUNT = 9;
-
+// eslint-disable-next-line import/prefer-default-export
 export function buildScenes(F, labelsOf) {
   const S = {};
   S.problem = {
