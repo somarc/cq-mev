@@ -123,7 +123,8 @@ export function buildScenes(F, labelsOf) {
     });
   });
 
-  /* Chapter 7: what cq-mev finds. Each beat lights the recipes that raise its findings (facts: results). */
+  /* Chapter 7: what cq-mev finds. Each beat lights the recipes that raise its findings
+     (facts: results). */
   (F.results || []).forEach((r) => {
     const hi = r.recipes.length ? r.recipes.map((id) => `chip:${id}`) : ['r:catalogs'];
     r.recipes.forEach((id) => {
