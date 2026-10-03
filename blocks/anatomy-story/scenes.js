@@ -134,7 +134,8 @@ export function buildScenes(F, labelsOf) {
     S[r.beat] = {
       ch: 7,
       alt: r.recipes.length
-        ? `The recipes, placed in their layers. Highlighted: ${labelsOf(hi.filter((k) => !k.startsWith('band:')))}, which raise ${r.findings.join(' and ')}.`
+        ? `The recipes, placed in their layers. Highlighted: ${labelsOf(hi.filter((k) => !k.startsWith('band:')))}, `
+          + `which ${r.recipes.length === 1 ? 'raises' : 'raise'} ${r.findings.join(' and ')}.`
         : 'The recipes, placed in their layers. Highlighted: the catalogs, which turn each sealed '
           + 'snapshot into findings.',
       scene: {
