@@ -1,0 +1,1350 @@
+/* anatomy-story. Console tokens from cq-mev-helper ui/app.css :root (facts.palette). */
+
+/* The SVG states are layered on purpose (base, quiet, highlight, focus), so source order wins. */
+/* stylelint-disable no-descending-specificity */
+.anatomy-story {
+  --as-paper: #fafbf7;
+  --as-ink: #222323;
+  --as-muted: #666963;
+  --as-line: #e0e2da;
+  --as-accent: #bf3324;
+  --as-accent-dark: #97271b;
+  --as-green: #346249;
+  --as-tint: #f0f1eb;
+  --as-tint2: #e6e8df;
+  --as-built: #eceee7;
+  --as-faint: #a9aca4;
+  --as-font: -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+  --as-mono: ui-monospace, sfmono-regular, consolas, monospace;
+  --as-top: var(--nav-height, 64px);
+
+  width: min(1360px, 100vw - 64px);
+  margin-left: calc((100% - min(1360px, 100vw - 64px)) / 2);
+  color: var(--as-ink);
+  font: 16px/1.55 var(--as-font);
+}
+
+.anatomy-story code,
+.anatomy-story kbd {
+  font-family: var(--as-mono);
+  font-size: 0.86em;
+}
+
+.anatomy-story :focus-visible {
+  outline: 2px solid var(--as-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- story grid ---------- */
+.anatomy-story .as-story {
+  display: grid;
+  grid-template-columns: minmax(330px, 410px) minmax(0, 1fr);
+  gap: 56px;
+}
+
+.anatomy-story .as-narrative {
+  padding-top: 18vh;
+}
+
+.anatomy-story .as-tail {
+  height: 46vh;
+}
+
+.anatomy-story .beat {
+  position: relative;
+  min-height: 64vh;
+  padding: 20px 0 20px 20px;
+  border-left: 2px solid var(--as-line);
+  color: var(--as-muted);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.anatomy-story .beat.step {
+  min-height: 46vh;
+}
+
+.anatomy-story .beat.opens {
+  margin-top: 18vh;
+}
+
+.anatomy-story .beat.opens:first-child {
+  margin-top: 0;
+}
+
+.anatomy-story .beat.is-active {
+  color: var(--as-ink);
+  border-left-color: var(--as-ink);
+}
+
+.anatomy-story .beat p,
+.anatomy-story .beat ul,
+.anatomy-story .beat ol {
+  margin: 0 0 14px;
+}
+
+.anatomy-story .beat .kicker {
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--as-muted);
+}
+
+.anatomy-story .beat h2 {
+  margin: 0 0 14px;
+  font: 650 28px/1.15 var(--as-font);
+  letter-spacing: -0.01em;
+  color: var(--as-ink);
+}
+
+.anatomy-story .beat h3 {
+  margin: 0 0 12px;
+  font: 600 20px/1.25 var(--as-font);
+  color: var(--as-ink);
+}
+
+.anatomy-story .beat .stepno {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.anatomy-story .beat.last .stepno {
+  color: var(--as-ink);
+}
+
+.anatomy-story .beat .ev,
+.anatomy-story .beat-alt {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--as-muted);
+}
+
+.anatomy-story .beat .ev code {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.anatomy-story .ev-l {
+  margin-right: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.anatomy-story .beat-alt {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.anatomy-story .deeplink {
+  position: absolute;
+  left: -16px;
+  top: 20px;
+  transform: translateX(-100%);
+  color: var(--as-line);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.anatomy-story .beat:hover .deeplink,
+.anatomy-story .deeplink:focus {
+  color: var(--as-muted);
+}
+
+.anatomy-story .beat ul {
+  padding: 0;
+  list-style: none;
+}
+
+.anatomy-story .beat li {
+  position: relative;
+  padding: 8px 0 8px 14px;
+  border-top: 1px solid var(--as-line);
+}
+
+.anatomy-story .beat li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 17px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentcolor;
+  opacity: 0.6;
+}
+
+.anatomy-story .beat li p {
+  margin: 0;
+}
+
+.anatomy-story .beat li[data-peek]:hover,
+.anatomy-story .beat li[data-peek]:focus {
+  color: var(--as-ink);
+}
+
+.anatomy-story .beat a:any-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.anatomy-story .beat .deeplink:any-link {
+  color: var(--as-line);
+  text-decoration: none;
+}
+
+.anatomy-story .scrub {
+  margin: 6px 0 18px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--as-line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.anatomy-story .scrub label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--as-muted);
+}
+
+.anatomy-story .scrub input {
+  width: 100%;
+  margin: 8px 0 2px;
+  accent-color: var(--as-ink);
+}
+
+.anatomy-story .ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--as-mono);
+  font-size: 10px;
+  color: var(--as-muted);
+}
+
+.anatomy-story .tick.has {
+  color: var(--as-ink);
+}
+
+.anatomy-story .scrub-out {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--as-ink);
+}
+
+/* ---------- stage ---------- */
+.anatomy-story .as-stage {
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 14px 0 12px;
+}
+
+.anatomy-story .as-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.anatomy-story .as-nav,
+.anatomy-story .as-ch {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--as-line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--as-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.anatomy-story .as-nav {
+  width: 32px;
+  height: 30px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.anatomy-story .as-nav:disabled {
+  color: var(--as-faint);
+  cursor: default;
+}
+
+.anatomy-story .as-nav:hover:not(:disabled),
+.anatomy-story .as-ch:hover {
+  border-color: var(--as-ink);
+}
+
+.anatomy-story .as-where {
+  flex: 1;
+  min-width: 0;
+  margin: 0 0 0 6px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.anatomy-story .as-chapters {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anatomy-story .as-ch {
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  color: var(--as-muted);
+}
+
+.anatomy-story .as-ch[aria-current='step'] {
+  border-color: var(--as-ink);
+  background: var(--as-ink);
+  color: var(--as-paper);
+}
+
+.anatomy-story .as-plate {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.anatomy-story .as-svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.anatomy-story .as-svg.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease;
+}
+
+.anatomy-story .as-error {
+  align-self: center;
+  color: var(--as-muted);
+  font-size: 14px;
+}
+
+.anatomy-story .as-caption {
+  flex: 0 0 auto;
+  height: 112px;
+  overflow: auto;
+  padding: 8px 2px 0;
+  border-top: 1px solid var(--as-line);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.anatomy-story .as-caption p {
+  margin: 0 0 3px;
+}
+
+.anatomy-story .cap-k {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--as-muted);
+}
+
+.anatomy-story .cap-t {
+  font-weight: 650;
+}
+
+.anatomy-story .cap-p {
+  color: #3b3d3a;
+}
+
+.anatomy-story .cap-hint {
+  font-size: 12px;
+  color: var(--as-muted);
+}
+
+.anatomy-story .cap-ev {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--as-muted);
+}
+
+.anatomy-story .cap-ev code {
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+.anatomy-story .proof {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--as-ink);
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--as-ink);
+}
+
+.anatomy-story .proof-docs {
+  border-style: dashed;
+  border-color: var(--as-muted);
+  color: var(--as-muted);
+}
+
+.anatomy-story .as-legend {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  padding-top: 6px;
+}
+
+.anatomy-story .legend-svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 18px;
+}
+
+.anatomy-story .legend-svg.lg-marks {
+  display: none;
+}
+
+.anatomy-story .legend-svg.lg-marks.is-shown {
+  display: block;
+}
+
+.anatomy-story .lg-t {
+  font: 11px var(--as-font);
+  fill: var(--as-muted);
+}
+
+/* ---------- SVG: states ---------- */
+.anatomy-story .k {
+  transition: opacity 0.22s ease;
+}
+
+.anatomy-story .k.is-off {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.anatomy-story .k.is-quiet {
+  opacity: 0.2;
+}
+
+.anatomy-story .k.is-on,
+.anatomy-story .k.is-hi,
+.anatomy-story .k.peek {
+  opacity: 1;
+}
+
+.anatomy-story .f {
+  cursor: pointer;
+}
+
+.anatomy-story .f:focus {
+  outline: none;
+}
+
+.anatomy-story .ring {
+  fill: none;
+  stroke: none;
+}
+
+.anatomy-story .f:focus-visible > .ring,
+.anatomy-story .f.pinned > .ring {
+  stroke: var(--as-ink);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 2;
+}
+
+/* ---------- SVG: story elements ---------- */
+.anatomy-story .frame {
+  fill: none;
+  stroke: var(--as-ink);
+  stroke-width: 1.5;
+}
+
+.anatomy-story .frame-t {
+  font: 600 9.5px var(--as-font);
+  letter-spacing: 0.14em;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .band-bg {
+  fill: var(--as-tint);
+  stroke: none;
+}
+
+.anatomy-story .f:focus-visible .band-bg,
+.anatomy-story .f.pinned .band-bg {
+  stroke: var(--as-ink);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 2;
+}
+
+.anatomy-story .is-hi .band-bg {
+  fill: var(--as-tint2);
+}
+
+.anatomy-story .band-t {
+  font: 650 11.5px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .band-s {
+  font: 9.5px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .area-t {
+  font: 10.5px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .is-hi .area-t {
+  font-weight: 600;
+  fill: var(--as-ink);
+}
+
+.anatomy-story .dot {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .lesson-t {
+  font: 650 11px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .lesson-s {
+  font: 10px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .peek .lesson-t {
+  text-decoration: underline;
+}
+
+.anatomy-story .peek .wire {
+  stroke: var(--as-ink);
+  stroke-width: 1.4;
+}
+
+.anatomy-story .shape {
+  stroke: var(--as-ink);
+  stroke-width: 1;
+}
+
+.anatomy-story .shape.st-built {
+  fill: var(--as-built);
+}
+
+.anatomy-story .shape.st-designed {
+  fill: var(--as-paper);
+  stroke-width: 1.1;
+}
+
+.anatomy-story .shape.st-ext {
+  fill: var(--as-paper);
+  stroke: var(--as-muted);
+  stroke-dasharray: 2 2;
+}
+
+.anatomy-story .shape.st-person {
+  fill: #fff;
+  stroke-width: 1.4;
+}
+
+.anatomy-story .n-t {
+  font: 650 11px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .n-t.big {
+  font-size: 13px;
+}
+
+.anatomy-story .n-s {
+  font: 9.5px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .is-hi > .shape.st-built,
+.anatomy-story .is-hi > .shape.st-person {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .is-hi > .shape.st-built ~ .n-t,
+.anatomy-story .is-hi > .shape.st-person ~ .n-t {
+  fill: var(--as-paper);
+}
+
+.anatomy-story .is-hi > .shape.st-built ~ .n-s,
+.anatomy-story .is-hi > .shape.st-person ~ .n-s {
+  fill: #c9cbc3;
+}
+
+.anatomy-story .is-hi > .shape.st-designed {
+  fill: #fff;
+  stroke-width: 2;
+}
+
+.anatomy-story .wire {
+  fill: none;
+  stroke: var(--as-muted);
+  stroke-width: 1.1;
+}
+
+.anatomy-story .head {
+  fill: var(--as-muted);
+}
+
+.anatomy-story .hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 10;
+  pointer-events: stroke;
+}
+
+.anatomy-story .w-ink,
+.anatomy-story .w-spine {
+  stroke: var(--as-ink);
+}
+
+.anatomy-story .head.w-ink,
+.anatomy-story .head.w-spine {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .w-lesson {
+  stroke-width: 0.8;
+}
+
+.anatomy-story .w-fan {
+  stroke: #b4b7ae;
+  stroke-width: 0.9;
+}
+
+.anatomy-story .docs {
+  stroke-dasharray: 4 3;
+}
+
+.anatomy-story .w-write {
+  stroke: var(--as-accent);
+  stroke-width: 1.6;
+}
+
+.anatomy-story .head.w-write {
+  fill: var(--as-accent);
+}
+
+.anatomy-story .is-hi .wire.w-read {
+  stroke: var(--as-ink);
+  stroke-width: 1.5;
+}
+
+.anatomy-story .is-hi .head.w-read {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .chip-r {
+  fill: #fff;
+  stroke: var(--as-line);
+  stroke-width: 1;
+}
+
+.anatomy-story .chip-t {
+  font: 10px var(--as-mono);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .is-hi > .chip-r:not(.c-write, .c-mono) {
+  fill: var(--as-ink);
+  stroke: var(--as-ink);
+}
+
+.anatomy-story .is-hi > .chip-t:not(.c-write, .c-mono) {
+  fill: var(--as-paper);
+}
+
+.anatomy-story .chip-r.c-write {
+  fill: #fff;
+  stroke: var(--as-accent);
+  stroke-width: 1.2;
+}
+
+.anatomy-story .chip-t.c-write {
+  font-size: 9px;
+  fill: var(--as-accent-dark);
+}
+
+.anatomy-story .chip-r.c-deferred {
+  fill: none;
+  stroke: var(--as-muted);
+  stroke-dasharray: 2 2;
+  opacity: 0.55;
+}
+
+.anatomy-story .chip-t.c-deferred {
+  fill: var(--as-muted);
+  opacity: 0.55;
+}
+
+.anatomy-story .chip-r.c-mono {
+  fill: #fff;
+  stroke: var(--as-ink);
+}
+
+.anatomy-story .chip-t.c-mono {
+  font-weight: 600;
+}
+
+.anatomy-story .chip-t.c-plain {
+  font-family: var(--as-font);
+  font-size: 10.5px;
+}
+
+.anatomy-story .gate-bar {
+  stroke: var(--as-ink);
+  stroke-width: 4;
+}
+
+.anatomy-story .is-hi .gate-bar {
+  stroke-width: 6;
+}
+
+.anatomy-story .gate-post {
+  stroke: var(--as-ink);
+  stroke-width: 1.5;
+}
+
+.anatomy-story .gate-t {
+  font: 650 10.5px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .stop-t {
+  font: 10px var(--as-mono);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .stop-n {
+  font: 10px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .stop-tick {
+  stroke: var(--as-ink);
+  stroke-width: 3;
+}
+
+.anatomy-story .card {
+  fill: #fff;
+  stroke: var(--as-ink);
+  stroke-width: 1.2;
+}
+
+.anatomy-story .card-h {
+  font: 650 12px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .card-rule {
+  stroke: var(--as-line);
+}
+
+.anatomy-story .part-f {
+  font: 650 10px var(--as-mono);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .part-s {
+  font: 10px var(--as-font);
+  fill: #3b3d3a;
+}
+
+.anatomy-story .un-s {
+  font: 10px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .un-n {
+  font: 650 11px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .run-doc {
+  fill: #fff;
+  stroke: var(--as-line);
+}
+
+.anatomy-story .col-h {
+  font: 600 10px var(--as-font);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .match {
+  stroke: var(--as-line);
+}
+
+.anatomy-story .present {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .chg {
+  fill: none;
+  stroke: var(--as-ink);
+  stroke-width: 1.2;
+}
+
+.anatomy-story .absent {
+  stroke: var(--as-muted);
+  stroke-width: 1.4;
+}
+
+.anatomy-story .unk {
+  fill: #fff;
+  stroke: var(--as-muted);
+  stroke-dasharray: 2 2;
+}
+
+.anatomy-story .unk-t {
+  font: 650 9.5px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .out-t {
+  font: 650 11px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .none-t {
+  font: 10px var(--as-mono);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .place-r {
+  fill: #fff;
+  stroke: var(--as-muted);
+  stroke-width: 0.9;
+}
+
+.anatomy-story .place-t {
+  font: 10px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .desc {
+  stroke-width: 1.4;
+}
+
+.anatomy-story .reader-t {
+  font: 10.5px var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .reader-t.mono {
+  font: 10px var(--as-mono);
+}
+
+.anatomy-story .rel-v {
+  font: 700 24px var(--as-font);
+  letter-spacing: -0.01em;
+  fill: var(--as-ink);
+}
+
+.anatomy-story .rel-d {
+  font: 10px var(--as-font);
+  fill: var(--as-muted);
+}
+
+.anatomy-story .rel-n {
+  font: 650 12px var(--as-font);
+  fill: var(--as-ink);
+}
+
+/* ---------- SVG: boundary view ---------- */
+.anatomy-story .as-boundary-svg text {
+  font-family: var(--as-font);
+  fill: var(--as-ink);
+}
+
+.anatomy-story .as-boundary-svg .mono {
+  font-family: var(--as-mono);
+}
+
+.anatomy-story .x-title {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.anatomy-story .as-boundary-svg .x-sum {
+  font-size: 11.5px;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .x-band {
+  stroke: none;
+  fill: var(--as-paper);
+}
+
+.anatomy-story .x-band.b1 {
+  fill: #f3f4ee;
+}
+
+.anatomy-story .x-band.base {
+  fill: #e7e8e0;
+}
+
+.anatomy-story .x-rule {
+  stroke: var(--as-line);
+}
+
+.anatomy-story .x-band-name {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.anatomy-story .as-boundary-svg .x-band-group {
+  font-size: 10.5px;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .x-hit {
+  fill: transparent;
+}
+
+.anatomy-story .f:focus-visible > .x-hit,
+.anatomy-story .f.pinned > .x-hit {
+  stroke: var(--as-ink);
+  stroke-width: 1.5;
+}
+
+.anatomy-story .x-tile {
+  fill: #fff;
+  stroke: var(--as-line);
+}
+
+.anatomy-story .f:focus-visible > .x-tile,
+.anatomy-story .f.pinned > .x-tile,
+.anatomy-story .x-focus .is-lit > .x-tile {
+  stroke: var(--as-ink);
+  stroke-width: 1.6;
+}
+
+.anatomy-story .tile-text,
+.anatomy-story .tile-measure {
+  font-size: 10.5px;
+}
+
+.anatomy-story .as-boundary-svg .tile-name {
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.anatomy-story .as-boundary-svg .tile-detail {
+  font-size: 10px;
+  font-weight: 400;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .rail {
+  fill: none;
+  stroke: var(--as-muted);
+  stroke-width: 1.1;
+}
+
+.anatomy-story .rail.docs {
+  stroke-dasharray: 4 3;
+}
+
+.anatomy-story .is-hi .rail,
+.anatomy-story .x-focus .is-lit .rail {
+  stroke: var(--as-ink);
+  stroke-width: 1.5;
+}
+
+.anatomy-story .row-label {
+  font-size: 10.5px;
+}
+
+.anatomy-story .as-boundary-svg .row-label.extra {
+  font-style: italic;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .as-boundary-svg .row-note {
+  font-size: 9.5px;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .mark-job {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .mark-caller {
+  fill: #fff;
+  stroke: var(--as-ink);
+  stroke-width: 1.4;
+}
+
+.anatomy-story .mark-half {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .mark-pulse {
+  fill: var(--as-muted);
+}
+
+.anatomy-story .strip.required {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .strip.disabled {
+  fill: #f3f4ee;
+  stroke: var(--as-muted);
+  stroke-dasharray: 3 2;
+}
+
+.anatomy-story .strip-label {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.anatomy-story .as-boundary-svg .strip-sub {
+  font-size: 10.5px;
+  font-weight: 400;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .leader {
+  stroke: var(--as-faint);
+}
+
+.anatomy-story .f:focus-visible > .strip,
+.anatomy-story .f.pinned > .strip {
+  stroke: var(--as-ink);
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+
+.anatomy-story .tap {
+  fill: var(--as-paper);
+}
+
+.anatomy-story .jog {
+  fill: none;
+  stroke: var(--as-paper);
+  stroke-width: 1.2;
+}
+
+.anatomy-story .write {
+  fill: none;
+  stroke: var(--as-accent);
+}
+
+.anatomy-story .write.heavy {
+  stroke-width: 4;
+}
+
+.anatomy-story .write-head,
+.anatomy-story .write-tap {
+  fill: var(--as-accent);
+}
+
+.anatomy-story .write-tap {
+  stroke: var(--as-paper);
+  stroke-width: 1.2;
+}
+
+.anatomy-story .x-store {
+  fill: #fbeeeb;
+  stroke: var(--as-accent);
+  stroke-width: 1.4;
+}
+
+.anatomy-story .f:focus-visible > .x-store,
+.anatomy-story .f.pinned > .x-store {
+  stroke-width: 2.6;
+}
+
+.anatomy-story .x-path {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.anatomy-story .as-boundary-svg .x-sub {
+  font-size: 9.5px;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .x-test {
+  font-size: 9px;
+}
+
+.anatomy-story .outbound {
+  fill: none;
+  stroke: var(--as-ink);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 3;
+}
+
+.anatomy-story .x-post {
+  fill: var(--as-ink);
+}
+
+.anatomy-story .x-bar {
+  fill: var(--as-green);
+}
+
+.anatomy-story .as-boundary-svg .gate-closed {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  fill: var(--as-green);
+}
+
+.anatomy-story .gate-why {
+  font-size: 10.5px;
+}
+
+.anatomy-story .provider {
+  stroke: var(--as-faint);
+  stroke-dasharray: 2 2;
+}
+
+.anatomy-story .as-boundary-svg .provider-t {
+  font-size: 10px;
+  fill: var(--as-faint);
+}
+
+.anatomy-story .as-boundary-svg .zone-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: var(--as-muted);
+}
+
+.anatomy-story .never-text {
+  display: none;
+  font-size: 9.5px;
+  text-decoration: line-through;
+}
+
+.anatomy-story .as-boundary-svg .never-text {
+  fill: var(--as-muted);
+}
+
+.anatomy-story .show-never .never-text {
+  display: inline;
+}
+
+.anatomy-story .show-never .tile-detail,
+.anatomy-story .show-never .row-note {
+  display: none;
+}
+
+.anatomy-story .show-never .rail,
+.anatomy-story .show-never .mark {
+  opacity: 0.15;
+}
+
+.anatomy-story .x-focus .xd:not(.is-lit) {
+  opacity: 0.16;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .anatomy-story .k,
+  .anatomy-story .beat,
+  .anatomy-story .as-svg,
+  .anatomy-story .as-svg.is-shown {
+    transition: none;
+  }
+}
+
+/* ---------- smaller screens ---------- */
+@media (width <= 1180px) {
+  .anatomy-story {
+    width: min(1360px, 100vw - 40px);
+    margin-left: calc((100% - min(1360px, 100vw - 40px)) / 2);
+    font-size: 15px;
+  }
+
+  .anatomy-story .as-story {
+    grid-template-columns: minmax(270px, 300px) minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .anatomy-story .as-stage {
+    padding: 10px 0 8px;
+  }
+
+  .anatomy-story .beat h2 {
+    font-size: 24px;
+  }
+
+  .anatomy-story .beat h3 {
+    font-size: 18px;
+  }
+
+  .anatomy-story .as-caption {
+    height: 92px;
+    font-size: 12px;
+  }
+
+  .anatomy-story .cap-hint {
+    display: none;
+  }
+}
+
+@media (width <= 899px) {
+  .anatomy-story .as-stage {
+    top: var(--as-top);
+  }
+}
+
+@media (width <= 820px) {
+  .anatomy-story {
+    width: auto;
+    margin-left: 0;
+  }
+
+  .anatomy-story .as-story {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .anatomy-story .as-stage {
+    order: -1;
+    z-index: 1;
+    height: 52vh;
+    border-bottom: 1px solid var(--as-line);
+    background: var(--as-paper);
+  }
+
+  .anatomy-story .as-chapters {
+    display: none;
+  }
+
+  .anatomy-story .as-caption {
+    height: 64px;
+  }
+
+  .anatomy-story .as-legend {
+    display: none;
+  }
+
+  .anatomy-story .as-narrative {
+    padding-top: 4vh;
+  }
+
+  .anatomy-story .beat {
+    min-height: 48vh;
+    padding-left: 14px;
+  }
+
+  .anatomy-story .beat.step {
+    min-height: 40vh;
+  }
+
+  .anatomy-story .beat.opens {
+    margin-top: 10vh;
+  }
+
+  .anatomy-story .deeplink {
+    display: none;
+  }
+}
+
+/* ---------- print ---------- */
+@media print {
+  .anatomy-story {
+    width: auto;
+    margin: 0;
+    font-size: 11pt;
+  }
+
+  .anatomy-story .as-stage,
+  .anatomy-story .deeplink,
+  .anatomy-story .scrub input,
+  .anatomy-story .ticks,
+  .anatomy-story .as-tail {
+    display: none;
+  }
+
+  .anatomy-story .as-story {
+    display: block;
+  }
+
+  .anatomy-story .as-narrative {
+    padding: 0;
+  }
+
+  .anatomy-story .beat {
+    min-height: 0;
+    margin: 0;
+    padding: 6pt 0 6pt 10pt;
+    border-left: 1.5pt solid var(--as-line);
+    color: var(--as-ink);
+  }
+
+  .anatomy-story .beat.step,
+  .anatomy-story .beat.opens:first-child {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .anatomy-story .beat.opens {
+    margin-top: 14pt;
+    padding-top: 12pt;
+    border-top: 0.5pt solid var(--as-line);
+  }
+
+  .anatomy-story .beat h2,
+  .anatomy-story .beat h3,
+  .anatomy-story .kicker,
+  .anatomy-story .stepno {
+    break-after: avoid;
+  }
+
+  .anatomy-story .beat li,
+  .anatomy-story .beat p {
+    break-inside: avoid;
+  }
+
+  .anatomy-story .beat-alt {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: 9.5pt;
+  }
+}
