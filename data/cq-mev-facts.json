@@ -2,7 +2,7 @@
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
   "scope": "cq-mev-helper and its model connectors.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit e02d949 (PRs #345 and #346, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit e02d949, on main since PRs #345 and #346 (2026-10-03) and not yet in a release; the last release is v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
   "cqMevCommit": "e02d949",
   "release": "v0.5.16",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
