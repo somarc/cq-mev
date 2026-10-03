@@ -1645,6 +1645,76 @@
    "source": "docs/GUIDE.md section 1"
   }
  ],
+ "results": [
+  {
+   "beat": "results-1",
+   "recipes": [],
+   "findings": []
+  },
+  {
+   "beat": "results-2",
+   "recipes": [
+    "sling-jobs@1"
+   ],
+   "findings": [
+    "persisted-backlog"
+   ],
+   "source": "SlingJobStinks"
+  },
+  {
+   "beat": "results-3",
+   "recipes": [
+    "osgi-settings@1"
+   ],
+   "findings": [
+    "installer-worker-dead"
+   ],
+   "source": "OsgiSettings"
+  },
+  {
+   "beat": "results-4",
+   "recipes": [
+    "blob-store@1",
+    "repository-vitals@1",
+    "osgi-settings@1"
+   ],
+   "findings": [
+    "maintenance history: estimated and skipped compaction",
+    "compaction-not-scheduled"
+   ],
+   "source": "MaintenanceSchedule, RepositoryVitals, OsgiSettings"
+  },
+  {
+   "beat": "results-5",
+   "recipes": [
+    "packages@1"
+   ],
+   "findings": [
+    "uninstall-deletes-root"
+   ],
+   "source": "PackageStinks"
+  },
+  {
+   "beat": "results-6",
+   "recipes": [
+    "osgi-relationships@1"
+   ],
+   "findings": [
+    "outside-code-in-request-or-login-path"
+   ],
+   "source": "OsgiStinks"
+  },
+  {
+   "beat": "results-7",
+   "recipes": [
+    "index-complexity@1"
+   ],
+   "findings": [
+    "grades L0 Watch to L4 Escalate"
+   ],
+   "source": "IndexComplexity"
+  }
+ ],
  "releases": [
   {
    "version": "v0.5.1",

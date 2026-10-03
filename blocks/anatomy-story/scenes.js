@@ -123,6 +123,27 @@ export function buildScenes(F, labelsOf) {
     });
   });
 
+  /* Chapter 7: what cq-mev finds. Each beat lights the recipes that raise its findings
+     (facts: results). */
+  (F.results || []).forEach((r) => {
+    const hi = r.recipes.length ? r.recipes.map((id) => `chip:${id}`) : ['r:catalogs'];
+    r.recipes.forEach((id) => {
+      const recipe = F.recipes.find((x) => x.id === id);
+      if (recipe && !hi.includes(`band:${recipe.layer}`)) hi.push(`band:${recipe.layer}`);
+    });
+    S[r.beat] = {
+      ch: 7,
+      alt: r.recipes.length
+        ? `The recipes, placed in their layers. Highlighted: ${labelsOf(hi.filter((k) => !k.startsWith('band:')))}, `
+          + `which ${r.recipes.length === 1 ? 'raises' : 'raise'} ${r.findings.join(' and ')}.`
+        : 'The recipes, placed in their layers. Highlighted: the catalogs, which turn each sealed '
+          + 'snapshot into findings.',
+      scene: {
+        strata: 'full', on: Q6, quiet: ['chip:*', 'r:*'], hi,
+      },
+    };
+  });
+
   S.releases = {
     ch: 7,
     scrubber: true,
