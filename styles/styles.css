@@ -39,7 +39,7 @@
   --heading-font-size-xs: 22px;
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 56px;
 }
 
 /* fallback fonts */
@@ -70,6 +70,10 @@
     --heading-font-size-s: 20px;
     --heading-font-size-xs: 18px;
   }
+}
+
+html {
+  scroll-padding-top: calc(var(--nav-height) + 16px);
 }
 
 body {
@@ -146,6 +150,11 @@ pre {
 
 main > div {
   margin: 40px 16px;
+}
+
+/* main takes focus from the skip link; the focus ring belongs to the link */
+main:focus {
+  outline: none;
 }
 
 input,
