@@ -1,0 +1,306 @@
+/* capture-finder: symptom -> recipe, with the recipe's cost and reads from the facts file */
+.capture-finder {
+  --cf-ink: #222323;
+  --cf-muted: #666963;
+  --cf-line: #e0e2da;
+  --cf-soft: #f0f1eb;
+  --cf-accent: #bf3324;
+  --cf-green: #346249;
+  --cf-mono: ui-monospace, sfmono-regular, consolas, monospace;
+
+  margin: 1.6em 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.capture-finder code {
+  font-family: var(--cf-mono);
+  font-size: 0.86em;
+  overflow-wrap: anywhere;
+}
+
+.capture-finder :focus-visible {
+  outline: 2px solid var(--cf-ink);
+  outline-offset: 2px;
+}
+
+/* controls */
+.capture-finder .capture-finder-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.capture-finder label {
+  color: var(--cf-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.capture-finder input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c9ccc2;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--cf-ink);
+  font-size: 16px;
+}
+
+.capture-finder input:focus-visible {
+  border-color: var(--cf-ink);
+  outline-offset: 0;
+}
+
+.capture-finder .capture-finder-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.capture-finder .capture-finder-chips button {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--cf-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cf-ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.capture-finder .capture-finder-chips button span {
+  color: var(--cf-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.capture-finder .capture-finder-chips button:hover {
+  border-color: var(--cf-ink);
+}
+
+.capture-finder .capture-finder-chips button[aria-pressed='true'] {
+  border-color: var(--cf-ink);
+  background: var(--cf-ink);
+  color: #fff;
+}
+
+.capture-finder .capture-finder-chips button[aria-pressed='true'] span {
+  color: #d6d8d0;
+}
+
+.capture-finder .capture-finder-status {
+  margin: 14px 0 8px;
+  color: var(--cf-muted);
+  font-size: 13px;
+}
+
+/* the list */
+.capture-finder .capture-finder-list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--cf-line);
+  list-style: none;
+}
+
+.capture-finder .capture-finder-list > li {
+  border-bottom: 1px solid var(--cf-line);
+}
+
+.capture-finder summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  padding: 12px 4px 12px 26px;
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+}
+
+.capture-finder summary::-webkit-details-marker {
+  display: none;
+}
+
+.capture-finder summary::before {
+  content: '';
+  position: absolute;
+  top: 19px;
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--cf-muted);
+  border-bottom: 1.5px solid var(--cf-muted);
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+
+.capture-finder details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.capture-finder .capture-finder-symptom {
+  font-weight: 500;
+}
+
+.capture-finder summary:hover .capture-finder-symptom {
+  text-decoration: underline;
+  text-decoration-color: var(--cf-line);
+  text-underline-offset: 3px;
+}
+
+.capture-finder .capture-finder-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  color: var(--cf-muted);
+  font-size: 13px;
+}
+
+.capture-finder .capture-finder-meta code {
+  color: var(--cf-ink);
+}
+
+.capture-finder .capture-finder-layer {
+  padding: 0 7px;
+  border: 1px solid var(--cf-line);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.capture-finder .capture-finder-dagger {
+  color: var(--cf-accent);
+  font-weight: 700;
+}
+
+.capture-finder .capture-finder-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* the open recipe */
+.capture-finder .capture-finder-detail {
+  margin: 0 0 16px 26px;
+  padding: 14px 16px;
+  border-left: 2px solid var(--cf-green);
+  background: var(--cf-soft);
+  font-size: 15px;
+}
+
+.capture-finder .capture-finder-detail > p {
+  margin: 0 0 10px;
+}
+
+.capture-finder .capture-finder-question {
+  display: block;
+  color: var(--cf-muted);
+}
+
+.capture-finder .capture-finder-facts {
+  margin: 0;
+}
+
+.capture-finder .capture-finder-facts > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding: 8px 0;
+  border-top: 1px solid var(--cf-line);
+}
+
+.capture-finder dt {
+  color: var(--cf-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.capture-finder dd {
+  margin: 0;
+}
+
+.capture-finder dd ul {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.capture-finder .capture-finder-empty,
+.capture-finder .capture-finder-legend,
+.capture-finder .capture-finder-error {
+  margin: 12px 0 0;
+  color: var(--cf-muted);
+  font-size: 13px;
+}
+
+.capture-finder .capture-finder-mark {
+  color: var(--cf-accent);
+  font-weight: 700;
+}
+
+.capture-finder .capture-finder-error {
+  color: var(--cf-accent);
+}
+
+@media (width >= 700px) {
+  .capture-finder summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .capture-finder .capture-finder-meta {
+    justify-content: flex-end;
+  }
+
+  .capture-finder .capture-finder-facts > div {
+    grid-template-columns: 11em minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capture-finder summary::before {
+    transition: none;
+  }
+}
+
+@media print {
+  .capture-finder .capture-finder-controls,
+  .capture-finder .capture-finder-status,
+  .capture-finder .capture-finder-empty {
+    display: none;
+  }
+
+  .capture-finder .capture-finder-list > li[hidden] {
+    display: block;
+  }
+
+  .capture-finder .capture-finder-list > li {
+    break-inside: avoid;
+  }
+
+  .capture-finder summary::before {
+    display: none;
+  }
+
+  .capture-finder summary {
+    padding-left: 0;
+  }
+
+  .capture-finder .capture-finder-detail {
+    margin-left: 0;
+    background: none;
+    font-size: 9pt;
+  }
+}

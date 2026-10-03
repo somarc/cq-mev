@@ -156,6 +156,23 @@ export function decorateMain(main) {
 }
 
 /**
+ * Loads a template's CSS and decoration (templates/<name>/), before the page appears.
+ * @param {string} name The template name
+ * @param {Element} main The main element
+ */
+async function loadTemplate(name, main) {
+  try {
+    const css = loadCSS(`${window.hlx.codeBasePath}/templates/${name}/${name}.css`);
+    const mod = await import(`${window.hlx.codeBasePath}/templates/${name}/${name}.js`);
+    if (mod.default) await mod.default(main);
+    await css;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Template ${name} failed`, error);
+  }
+}
+
+/**
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
@@ -165,6 +182,7 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
+    if (document.body.classList.contains('guide')) await loadTemplate('guide', main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }

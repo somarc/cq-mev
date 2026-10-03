@@ -96,6 +96,17 @@ footer .footer-column:first-child p:last-child {
   font-size: 13px;
 }
 
+/* a column of links (the guide's pages) */
+footer .footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+footer .footer li {
+  margin: 0 0 7px;
+}
+
 footer .footer-base {
   margin-top: 48px;
   padding: 18px 0 20px;
@@ -125,8 +136,8 @@ footer .footer-base {
   }
 
   footer .footer-columns {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 56px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 48px;
   }
 
   footer .footer-column:first-child {
@@ -154,6 +165,7 @@ footer .footer-base {
     margin-bottom: 10pt;
   }
 
+  footer .footer-column:has(> .default-content-wrapper > ul),
   footer .footer-column:has(.facts-stamp.rules) {
     display: none;
   }

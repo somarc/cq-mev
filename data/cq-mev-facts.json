@@ -2,8 +2,8 @@
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
   "scope": "cq-mev-helper and its model connectors.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit b859c1e (PR #345, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
-  "cqMevCommit": "b859c1e",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit e02d949 (PRs #345 and #346, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "e02d949",
   "release": "v0.5.16",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
  },
@@ -641,8 +641,8 @@
     "capture:wires",
     "capture:stability"
    ],
-   "findings": "osgi-stinks@5",
    "diff": "cq-mev.osgi-stinks-diff.v1",
+   "findings": "osgi-stinks@5",
    "guard": [
     "HouseRulesSourceGuardTest#osgiRelationshipsNeverObtainsServicesChangesStateOrReadsConfigurationValues"
    ],
@@ -668,8 +668,8 @@
    "sealed": "submission",
    "callerSession": "HTL scripts under `/apps`",
    "stages": [],
-   "findings": "htl-use-stinks@1",
    "diff": null,
+   "findings": "htl-use-stinks@1",
    "guard": [
     "HtlUseTest#theCaptureReadsOnlyItsAllowlistAndNeverLoadsRendersQueriesOrWrites"
    ],
@@ -695,8 +695,8 @@
    "stages": [
     "capture:manifests"
    ],
-   "findings": null,
    "diff": null,
+   "findings": null,
    "guard": [
     "HouseRulesSourceGuardTest#bundleProvenanceReadsManifestMetadataOnlyAndNeverCallsAModel"
    ],
@@ -721,8 +721,8 @@
     "capture:settings",
     "capture:installer"
    ],
-   "findings": "settings-stinks@1",
    "diff": null,
+   "findings": "settings-stinks@1",
    "guard": [
     "OsgiSettingsTest#sourceNeverReadsBeyondTheAllowlistOrInvokesAnything",
     "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly"
@@ -751,8 +751,8 @@
    "stages": [
     "capture:bundle"
    ],
-   "findings": null,
    "diff": null,
+   "findings": null,
    "guard": [
     "HouseRulesSourceGuardTest#bundleRuntimeEvidenceNeverReadsJarsConfigurationOrContent"
    ],
@@ -774,8 +774,8 @@
    "sealed": "submission",
    "callerSession": null,
    "stages": [],
-   "findings": null,
    "diff": null,
+   "findings": null,
    "guard": [
     "HouseRulesSourceGuardTest#publisherInferenceReadsOnlyItsSealedProvenanceSnapshot"
    ],
@@ -804,8 +804,8 @@
     "capture:caches",
     "capture:sessions"
    ],
-   "findings": "grades",
    "diff": null,
+   "findings": "grades",
    "guard": [
     "ApiSecurityTest#pulseReadsAttributesOnlyAndNeverInvokesOrWritesManagementState"
    ],
@@ -835,8 +835,8 @@
     "capture:checkpoints",
     "capture:environment"
    ],
-   "findings": "grades",
    "diff": null,
+   "findings": "grades",
    "guard": [
     "ApiSecurityTest#indexComplexityReadsAttributesOnlyAndNeverKeepsFailureTextOrInvokesOperations"
    ],
@@ -867,8 +867,8 @@
     "capture:active-deletion",
     "capture:maintenance"
    ],
-   "findings": "grades",
    "diff": null,
+   "findings": "grades",
    "guard": [
     "ApiSecurityTest#blobStoreSourceNeverInvokesAnOperationOrReadsGlobalMarkStatsAConfigurationValueOrABinary"
    ],
@@ -898,8 +898,8 @@
     "capture:thread-pools",
     "capture:lane-threads"
    ],
-   "findings": "grades",
    "diff": null,
+   "findings": "grades",
    "guard": [
     "ApiSecurityTest#schedulerThreadsSourceNeverInvokesAnOperationOrReadsAStackOrSchedulerOrJobPayload",
     "SchedulerThreadsTest#neverInvokesAnMBeanOperationOrReadsAThreadStackOrSchedulerPayload"
@@ -928,8 +928,8 @@
     "capture:queues",
     "capture:distribution"
    ],
-   "findings": "grades",
    "diff": null,
+   "findings": "grades",
    "guard": [
     "ApiSecurityTest#replicationSourceNeverTouchesQueueContentsConfigurationOrOperations"
    ],
@@ -954,8 +954,8 @@
    "sealed": "submission",
    "callerSession": "`/var/eventing/jobs` and the `/oak:index/slingeventJob` definition",
    "stages": [],
-   "findings": "sling-job-stinks@2",
    "diff": null,
+   "findings": "sling-job-stinks@2",
    "guard": [
     "SlingJobsTest#theCaptureReadsNamesOnlyAndNeverQueriesWritesOrObtainsAService"
    ],
@@ -979,8 +979,8 @@
    "sealed": "submission",
    "callerSession": "Workflow instance trees and the models they name",
    "stages": [],
-   "findings": "workflow-stinks@3",
    "diff": null,
+   "findings": "workflow-stinks@3",
    "guard": [
     "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnly"
    ],
@@ -1004,8 +1004,8 @@
    "sealed": "submission",
    "callerSession": "`/etc/packages`, and at level 3 the roots its packages name",
    "stages": [],
-   "findings": "package-stinks@3",
    "diff": "cq-mev.package-stinks-diff.v1",
+   "findings": "package-stinks@3",
    "guard": [
     "PackagesTest#theCaptureReadsOnlyItsAllowlistAndNeverAFileVaultApiABinaryAQueryOrAWrite"
    ],
@@ -1029,8 +1029,8 @@
    "sealed": "submission",
    "callerSession": "`/conf` and one `/content` root",
    "stages": [],
-   "findings": "content-stinks@3",
    "diff": "cq-mev.content-stinks-diff.v1",
+   "findings": "content-stinks@3",
    "guard": [
     "ContentArchitectureSecurityTest#neverWritesQueriesOrUsesTheHelpersOwnServiceSession"
    ],

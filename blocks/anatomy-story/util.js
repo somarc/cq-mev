@@ -79,7 +79,8 @@ export function createRegistry() {
     focusable(g, info) {
       g.setAttribute('tabindex', '-1');
       g.setAttribute('role', 'button');
-      const first = info.lines && info.lines.length ? `. ${info.lines[0]}` : '';
+      const stop = /[.?!]$/.test(info.title) ? ' ' : '. ';
+      const first = info.lines && info.lines.length ? `${stop}${info.lines[0]}` : '';
       g.setAttribute('aria-label', `${info.title}${first}`);
       g.classList.add('f');
       INFO.set(g, info);

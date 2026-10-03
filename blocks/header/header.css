@@ -179,7 +179,8 @@ header .nav-menu {
 
 header nav.is-open .nav-menu {
   box-sizing: border-box;
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: fixed;
   inset: var(--nav-height) 0 0;
   overflow-y: auto;
@@ -192,6 +193,40 @@ header .nav-menu ul {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* the top levels (Story, Guide); in the sheet, each level's links follow its own row */
+header .nav-menu .nav-levels {
+  display: contents;
+}
+
+header .nav-level-item,
+header .nav-menu .nav-chapters {
+  order: var(--nav-order, 0);
+}
+
+header .nav-level {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 18px 0 8px;
+  color: var(--nav-muted);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+header .nav-level:not([aria-current])::after {
+  content: '→';
+  letter-spacing: 0;
+}
+
+header .nav-level:hover,
+header .nav-level[aria-current] {
+  color: var(--nav-ink);
+  text-decoration: none;
 }
 
 header .nav-chapters a {
@@ -213,6 +248,7 @@ header .nav-n {
 }
 
 header .nav-menu .nav-tools {
+  order: 99;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 28px;
@@ -298,6 +334,41 @@ header .nav-ext {
     gap: 2px;
   }
 
+  header .nav-menu .nav-levels {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-right: auto;
+  }
+
+  header .nav-level-item,
+  header .nav-menu .nav-chapters,
+  header .nav-menu .nav-tools {
+    order: 0;
+  }
+
+  header .nav-level {
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  header .nav-level:not([aria-current])::after {
+    content: none;
+  }
+
+  header .nav-level:hover {
+    background: #eef0e9;
+  }
+
+  header .nav-level[aria-current],
+  header .nav-level[aria-current]:hover {
+    background: var(--nav-ink);
+    color: var(--nav-paper);
+  }
+
   header .nav-chapters li,
   header .nav-tools li {
     display: flex;
@@ -348,6 +419,48 @@ header .nav-ext {
 
   header .nav-chapters a:focus-visible {
     outline-offset: -6px;
+  }
+}
+
+/* between 1000 and 1279 px, two levels, the chapters and the tools share one line */
+@media (width >= 1000px) and (width < 1280px) {
+  header nav {
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  header .nav-wordmark {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  header .nav-menu,
+  header nav.is-open .nav-menu {
+    gap: 14px;
+  }
+
+  header .nav-chapters a {
+    padding: 0 6px;
+  }
+
+  header .nav-chapters a::after {
+    right: 6px;
+    left: 6px;
+  }
+
+  header .nav-menu .nav-tools {
+    gap: 12px;
+    padding-left: 14px;
+  }
+}
+
+@media (width >= 1000px) {
+  header .nav-tools a {
+    white-space: nowrap;
   }
 }
 

@@ -1,0 +1,342 @@
+/* guide: a calm long-form reading layout with a side table of contents */
+body.guide {
+  --guide-ink: #222323;
+  --guide-muted: #666963;
+  --guide-line: #e0e2da;
+  --guide-soft: #f0f1eb;
+  --guide-green: #346249;
+  --guide-mono: ui-monospace, sfmono-regular, consolas, monospace;
+  --guide-measure: 40em;
+}
+
+body.guide main {
+  box-sizing: border-box;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px 24px;
+  font-size: 18px;
+}
+
+body.guide main > .section {
+  margin: 0;
+}
+
+body.guide main > .section > div {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.guide main h1 {
+  margin-top: 1em;
+  font-size: clamp(32px, 5vw, 44px);
+}
+
+body.guide main > .section:first-of-type h1 {
+  max-width: 18em;
+}
+
+body.guide main h2 {
+  margin: 0 0 0.4em;
+  padding-top: 40px;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+body.guide main > .section:not(:first-of-type) {
+  margin-top: 40px;
+  border-top: 1px solid var(--guide-line);
+}
+
+body.guide main > .section.guide-end-container {
+  border-top: 0;
+}
+
+body.guide main h3 {
+  font-size: 20px;
+}
+
+body.guide main li {
+  margin: 0.35em 0;
+}
+
+body.guide main li > ul,
+body.guide main li > p {
+  margin-top: 0.4em;
+}
+
+body.guide main pre {
+  font-family: var(--guide-mono);
+  font-size: 14px;
+}
+
+body.guide main pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+body.guide main blockquote {
+  margin: 1.4em 0 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--guide-green);
+  background: var(--guide-soft);
+  font-size: 16px;
+}
+
+body.guide main blockquote p {
+  margin: 0;
+}
+
+/* table of contents: a box under the intro on small screens */
+body.guide .guide-toc {
+  margin: 32px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+body.guide .guide-toc-inner {
+  padding: 14px 16px;
+  border: 1px solid var(--guide-line);
+  border-radius: 6px;
+}
+
+body.guide .guide-toc-title {
+  margin: 0 0 8px;
+  color: var(--guide-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.guide .guide-toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.guide .guide-toc li {
+  margin: 0;
+}
+
+body.guide .guide-toc-link {
+  display: block;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid transparent;
+  color: var(--guide-muted);
+  text-decoration: none;
+}
+
+body.guide .guide-toc-link:hover {
+  color: var(--guide-ink);
+  text-decoration: none;
+}
+
+body.guide .guide-toc-link[aria-current] {
+  border-left-color: var(--guide-ink);
+  color: var(--guide-ink);
+  font-weight: 600;
+}
+
+/* end of page: previous and next, then the source stamp */
+body.guide .guide-end {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--guide-line);
+}
+
+body.guide .guide-pager {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+body.guide .guide-pager-link {
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+  border: 1px solid var(--guide-line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--guide-ink);
+  text-decoration: none;
+}
+
+body.guide .guide-pager-link:hover {
+  border-color: var(--guide-ink);
+  color: var(--guide-ink);
+  text-decoration: none;
+}
+
+body.guide .guide-pager .guide-pager-next {
+  grid-column: 2;
+  text-align: right;
+}
+
+body.guide .guide-pager-label {
+  color: var(--guide-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.guide .guide-pager-prev .guide-pager-label::before {
+  content: '← ';
+}
+
+body.guide .guide-pager-next .guide-pager-label::after {
+  content: ' →';
+}
+
+body.guide .guide-pager-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+body.guide .guide-source {
+  margin: 20px 0 0;
+  color: var(--guide-muted);
+  font-size: 13px;
+}
+
+body.guide .guide-source code {
+  font-family: var(--guide-mono);
+  font-size: 12px;
+}
+
+body.guide .guide-source a:any-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* reading text: measure, links, inline code, the landing index */
+body.guide main .default-content-wrapper > p,
+body.guide main .default-content-wrapper > ul,
+body.guide main .default-content-wrapper > ol,
+body.guide main .default-content-wrapper > blockquote,
+body.guide main .default-content-wrapper > pre {
+  max-width: var(--guide-measure);
+}
+
+body.guide main .default-content-wrapper a:any-link {
+  text-decoration: underline;
+  text-decoration-color: #b9bcb2;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+body.guide main .default-content-wrapper a:hover {
+  color: var(--guide-green);
+  text-decoration-color: currentcolor;
+}
+
+body.guide main .default-content-wrapper code {
+  padding: 0.08em 0.3em;
+  border-radius: 3px;
+  background: var(--guide-soft);
+  font-family: var(--guide-mono);
+  font-size: 0.84em;
+  overflow-wrap: anywhere;
+}
+
+body.guide main .default-content-wrapper:has(> #in-this-guide) > ul {
+  padding: 0;
+  list-style: none;
+}
+
+body.guide main .default-content-wrapper:has(> #in-this-guide) > ul > li {
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--guide-line);
+  color: var(--guide-muted);
+}
+
+body.guide main .default-content-wrapper:has(> #in-this-guide) > ul > li > a {
+  color: var(--guide-ink);
+  font-weight: 600;
+}
+
+body.guide main > .section:first-of-type h1 + p {
+  max-width: 36em;
+  color: #3b3d3a;
+}
+
+@media (width < 700px) {
+  body.guide main > .section:first-of-type h1 + p {
+    font-size: 1.06em;
+  }
+}
+
+body.guide main :any-link:focus-visible {
+  outline: 2px solid var(--guide-ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* desktop: text column and a sticky table of contents beside it */
+@media (width >= 1000px) {
+  body.guide main {
+    padding: 0 32px 32px;
+  }
+
+  body.guide main.guide-has-toc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 13.5rem;
+    column-gap: 56px;
+  }
+
+  body.guide main.guide-has-toc > * {
+    grid-column: 1;
+  }
+
+  body.guide main.guide-has-toc > .guide-toc {
+    grid-column: 2;
+    grid-row: 2 / span var(--guide-rows, 1);
+    margin: 0;
+    padding-top: 40px;
+  }
+
+  body.guide .guide-toc-inner {
+    position: sticky;
+    top: calc(var(--nav-height) + 24px);
+    max-height: calc(100vh - var(--nav-height) - 48px);
+    overflow-y: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  body.guide .guide-toc-link {
+    padding: 6px 0 6px 14px;
+    border-left-color: var(--guide-line);
+  }
+}
+
+@media print {
+  body.guide main {
+    max-width: none;
+    padding: 0;
+  }
+
+  body.guide .guide-toc,
+  body.guide .guide-pager {
+    display: none;
+  }
+
+  body.guide main h2 {
+    padding-top: 12pt;
+    font-size: 15pt;
+    break-after: avoid;
+  }
+
+  body.guide main > .section:not(:first-of-type) {
+    margin-top: 12pt;
+  }
+
+  body.guide .guide-end {
+    margin-top: 12pt;
+    padding-top: 6pt;
+  }
+}
