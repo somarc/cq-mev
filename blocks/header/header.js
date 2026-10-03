@@ -160,7 +160,6 @@ export default async function decorate(block) {
   function setOpen(open, focusToggle) {
     const o = open && !DESKTOP.matches;
     toggle.setAttribute('aria-expanded', String(o));
-    toggle.setAttribute('aria-label', o ? 'Close the menu' : 'Open the menu');
     nav.classList.toggle('is-open', o);
     document.body.style.overflowY = o ? 'hidden' : '';
     if (focusToggle) toggle.focus();
