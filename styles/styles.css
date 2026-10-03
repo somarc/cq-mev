@@ -12,16 +12,18 @@
 
 :root {
   /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+
+  /* the cq-mev console palette (cq-mev-helper ui/app.css :root) */
+  --background-color: #fafbf7;
+  --light-color: #f0f1eb;
+  --dark-color: #666963;
+  --text-color: #222323;
+  --link-color: #222323;
+  --link-hover-color: #346249;
 
   /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  --body-font-family: -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+  --heading-font-family: -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -322,4 +324,23 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* default content: readable measure, and a large hero heading */
+main .default-content-wrapper > p,
+main .default-content-wrapper > ul,
+main .default-content-wrapper > ol {
+  max-width: 40em;
+}
+
+main > .section:first-of-type h1 {
+  max-width: 17em;
+  margin-top: 1.2em;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+main > .section:first-of-type h1 + p {
+  font-size: 1.15em;
+  line-height: 1.5;
 }
