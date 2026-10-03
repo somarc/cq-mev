@@ -1,9 +1,9 @@
 {
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
-  "scope": "cq-mev-helper and its model connectors. Preflight is a separate module and is not on this site.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit 4ca3356 (PR #345, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
-  "cqMevCommit": "4ca3356",
+  "scope": "cq-mev-helper and its model connectors.",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit b859c1e (PR #345, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "b859c1e",
   "release": "v0.5.16",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
  },
@@ -408,7 +408,14 @@
     "tile-indexing",
     "tile-observation",
     "tile-jvm"
-   ]
+   ],
+   "reads": [
+    "job-queues",
+    "oak-jmx",
+    "observation",
+    "jvm"
+   ],
+   "readsSource": "cq-mev-helper/README.md, Reading the pulse"
   },
   {
    "id": "job-service",
@@ -589,7 +596,8 @@
    "label": "Pinned baselines",
    "group": "core",
    "status": "designed",
-   "issue": 188
+   "issue": 188,
+   "summary": "Pin a run as the baseline a diff compares against, so purge keeps it (#188)."
   },
   {
    "id": "scheduled-captures",
@@ -1109,12 +1117,6 @@
    "evidence": "cq-mev-helper/tools/package.py:59"
   },
   {
-   "from": "pkg-connectors",
-   "to": "connectors",
-   "kind": "hosts",
-   "evidence": "connectors/tools/package.py:69"
-  },
-  {
    "from": "b-helper",
    "to": "b-connector-api",
    "kind": "depends-on",
@@ -1252,6 +1254,24 @@
    "to": "connector-api",
    "kind": "calls",
    "evidence": "SettingsServlet -> ProtectedSettings"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-jev",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-anthropic",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-openai",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
   }
  ],
  "features": [
@@ -1411,7 +1431,7 @@
      "blocks": [
       "job-service"
      ],
-     "text": "Caller-session recipes read now, with the operator's session, and seal at submission. Every other recipe is queued as a Sling job on topic com/adobe/mev/helper/assess.",
+     "text": "A recipe sealed at submission reads now, with the operator's own session, and seals its snapshot in the request. Every other recipe is queued as a Sling job on topic com/adobe/mev/helper/assess; three of them (index complexity, blob store, settings) also read one part with the operator's session at submission and carry it into the job.",
      "evidence": "JobService.submit*"
     },
     {
