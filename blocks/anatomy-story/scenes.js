@@ -140,7 +140,7 @@ export function buildScenes(F, labelsOf) {
   };
   S.descriptor = {
     ch: 7,
-    alt: 'The ten places fold into one recipe descriptor (#315, in PR #345, not merged). Five readers take it from there: Java, recipes.json, the UI test, check_repository.py and the anatomy map.',
+    alt: 'The ten places fold into one recipe descriptor (#315, on main since PR #345, not yet released). Five readers take it from there: Java, recipes.json, the UI test, check_repository.py and the anatomy map.',
     scene: {
       strata: 'narrow', on: ['frame', 'reader:*'], quiet: ['band:*', 'place:*'], hi: ['descriptor'], collapse: true,
     },

@@ -271,14 +271,14 @@ function buildPlaces(F, R, L, ctx) {
 
   const de = L('descriptor', `Recipe descriptor, #${rp.issue}`);
   s('rect', {
-    class: 'shape st-designed desc', x: CX - 90, y: CY - 26, width: 180, height: 52, rx: 6,
+    class: 'shape st-built desc', x: CX - 90, y: CY - 26, width: 180, height: 52, rx: 6,
   }, de);
   s('text', {
     class: 'n-t big', x: CX, y: CY - 4, 'text-anchor': 'middle',
   }, de, 'Recipe descriptor');
   s('text', {
     class: 'n-s', x: CX, y: CY + 13, 'text-anchor': 'middle',
-  }, de, `#${rp.issue} · PR #345, not merged`);
+  }, de, `#${rp.issue} · on main, not released`);
   R.focusable(de, {
     title: `Recipe descriptor (#${rp.issue})`, lines: [rp.after, F.meta.facts], evidence: F.meta.descriptorSchema, proof: 'docs',
   });
