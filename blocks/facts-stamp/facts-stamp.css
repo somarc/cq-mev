@@ -1,0 +1,125 @@
+/* facts-stamp: meta from the facts file, or (variant rules) the house rules */
+.facts-stamp {
+  --fs-ink: #222323;
+  --fs-muted: #666963;
+  --fs-line: #dcded5;
+  --fs-mono: ui-monospace, sfmono-regular, consolas, monospace;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.facts-stamp .facts-stamp-intro p {
+  max-width: 34em;
+  color: var(--fs-muted);
+}
+
+.facts-stamp code {
+  font-family: var(--fs-mono);
+  font-size: 12.5px;
+}
+
+.facts-stamp .facts-stamp-meta {
+  margin: 4px 0 14px;
+  border-top: 1px solid var(--fs-line);
+}
+
+.facts-stamp .facts-stamp-meta > div {
+  display: grid;
+  grid-template-columns: 8em minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--fs-line);
+}
+
+.facts-stamp dt {
+  color: var(--fs-muted);
+  font-size: 12.5px;
+}
+
+.facts-stamp dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.facts-stamp .facts-stamp-note {
+  max-width: 40em;
+  color: var(--fs-muted);
+  font-size: 12.5px;
+}
+
+.facts-stamp .facts-stamp-json {
+  font-weight: 600;
+}
+
+.facts-stamp .facts-stamp-tag {
+  display: inline-block;
+  margin-left: 2px;
+  padding: 0 5px;
+  border: 1px solid var(--fs-line);
+  border-radius: 3px;
+  color: var(--fs-muted);
+  font: 600 10.5px/1.6 var(--fs-mono);
+  letter-spacing: 0.04em;
+  vertical-align: 1px;
+}
+
+.facts-stamp .facts-stamp-rules {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--fs-line);
+  list-style: none;
+}
+
+.facts-stamp .facts-stamp-rules li {
+  position: relative;
+  padding: 7px 0 7px 18px;
+  border-bottom: 1px solid var(--fs-line);
+}
+
+.facts-stamp .facts-stamp-rules li::before {
+  content: '';
+  position: absolute;
+  top: calc(7px + 0.75em);
+  left: 2px;
+  width: 8px;
+  height: 1.5px;
+  background: var(--fs-ink);
+}
+
+.facts-stamp .facts-stamp-error {
+  color: var(--fs-muted);
+}
+
+@media (width >= 640px) {
+  .facts-stamp .facts-stamp-meta > div {
+    grid-template-columns: 9.5em minmax(0, 1fr);
+  }
+}
+
+@media print {
+  .facts-stamp,
+  .facts-stamp .facts-stamp-intro p {
+    font-size: 9pt;
+  }
+
+  .facts-stamp code,
+  .facts-stamp dt,
+  .facts-stamp .facts-stamp-note {
+    font-size: 8.5pt;
+  }
+
+  .facts-stamp .facts-stamp-json::after {
+    content: ' ' attr(href);
+    font: 8.5pt var(--fs-mono);
+  }
+
+  .facts-stamp .facts-stamp-meta > div {
+    padding: 2pt 0;
+  }
+
+  .facts-stamp .facts-stamp-tag {
+    border: 0;
+  }
+}
