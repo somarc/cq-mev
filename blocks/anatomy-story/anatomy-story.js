@@ -350,6 +350,28 @@ export default async function decorate(block) {
   }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
   beatEls.forEach((el) => middle.observe(el));
   window.addEventListener('scrollend', () => { navigating = false; });
+  /* A jump (the End key, a footer link) can skip every beat, so no beat crosses the
+     reading line. When scrolling stops, settle on the beat at the line, the last one past
+     the end, or the first one above the start. A timer, because not every browser sends
+     scrollend. */
+  let settleTimer = 0;
+  window.addEventListener('scroll', () => {
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => {
+      if (navigating) return;
+      const line = window.innerHeight * (NARROW.matches ? 0.78 : 0.5);
+      const rects = beatEls.map((el) => el.getBoundingClientRect());
+      let i = rects.findIndex((r) => r.top <= line && r.bottom >= line);
+      if (i < 0 && rects[rects.length - 1].bottom < line) i = beats.length - 1;
+      const above = i < 0 && rects[0].top > line;
+      if (above) i = 0;
+      if (i >= 0 && i !== state.beat) activate(i, false);
+      // Above the story the hero shows, so the URL keeps no beat: a reload starts at the hero.
+      if (above && window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }, 160);
+  }, { passive: true });
   window.addEventListener('hashchange', () => {
     const i = beats.findIndex((b) => `#${b.id}` === window.location.hash);
     if (i >= 0 && i !== state.beat) activate(i, true);
