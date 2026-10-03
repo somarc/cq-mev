@@ -5,19 +5,7 @@
  * Default: meta (scope, commit, release, descriptor schema) and a link to the JSON.
  * Variant "rules": the house rules.
  */
-const FACTS_PATH = '/data/cq-mev-facts.json';
-let facts;
-
-function loadFacts() {
-  if (!facts) {
-    const base = (window.hlx && window.hlx.codeBasePath) || '';
-    facts = fetch(`${base}${FACTS_PATH}`).then((resp) => {
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      return resp.json();
-    });
-  }
-  return facts;
-}
+import { FACTS_PATH, loadFacts } from '../../scripts/facts.js';
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
