@@ -1,0 +1,1729 @@
+{
+ "meta": {
+  "title": "cq-mev: what it reads, writes and sends",
+  "scope": "cq-mev-helper and its model connectors.",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit e02d949 (PRs #345 and #346, not yet merged), on top of release v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "e02d949",
+  "release": "v0.5.16",
+  "descriptorSchema": "cq-mev.recipe-descriptors.v1"
+ },
+ "counts": {
+  "contentPackages": 2,
+  "bundles": 5,
+  "dsComponents": 17,
+  "helperRoutes": {
+   "get": 17,
+   "post": 5
+  },
+  "recipes": 15,
+  "catalogs": 7,
+  "diffViews": 3,
+  "pulseTiles": 4,
+  "captureCards": 13,
+  "cardGroups": 5,
+  "callerSessionRecipes": 8
+ },
+ "layers": {
+  "consoleOrder": [
+   "osgi",
+   "oak",
+   "sling",
+   "packages",
+   "content"
+  ],
+  "stackOrder": [
+   "content",
+   "packages",
+   "sling",
+   "osgi",
+   "oak",
+   "runtime"
+  ],
+  "items": [
+   {
+    "id": "content",
+    "label": "Content",
+    "consoleGroup": "Site structure",
+    "groupId": "group-content"
+   },
+   {
+    "id": "packages",
+    "label": "Packages",
+    "consoleGroup": "Package store",
+    "groupId": "group-packages"
+   },
+   {
+    "id": "sling",
+    "label": "Sling",
+    "consoleGroup": "Background work",
+    "groupId": "group-sling"
+   },
+   {
+    "id": "osgi",
+    "label": "OSGi",
+    "consoleGroup": "Code & wiring",
+    "groupId": "group-osgi"
+   },
+   {
+    "id": "oak",
+    "label": "Oak",
+    "consoleGroup": "Repository",
+    "groupId": "group-oak"
+   },
+   {
+    "id": "runtime",
+    "label": "JVM",
+    "consoleGroup": null,
+    "groupId": null
+   }
+  ]
+ },
+ "aemAreas": [
+  {
+   "id": "content-root",
+   "layer": "content",
+   "label": "One /content root",
+   "detail": "Page hierarchy census; seven jcr:content properties per page, never component trees"
+  },
+  {
+   "id": "conf",
+   "layer": "content",
+   "label": "/conf",
+   "detail": "Configuration buckets and template metadata"
+  },
+  {
+   "id": "etc-packages",
+   "layer": "packages",
+   "label": "/etc/packages",
+   "detail": "Level 1 definitions; level 2 binary length; level 3 up to 10,000 root lookups outside /etc/packages"
+  },
+  {
+   "id": "eventing-jobs",
+   "layer": "sling",
+   "label": "/var/eventing/jobs",
+   "detail": "Persisted Sling jobs, by name only; plus /oak:index/slingeventJob and topology"
+  },
+  {
+   "id": "job-queues",
+   "layer": "sling",
+   "label": "Sling job queues",
+   "detail": "In-memory queue statistics (at most 10 loaded jobs per topic)"
+  },
+  {
+   "id": "scheduler",
+   "layer": "sling",
+   "label": "Sling scheduler and threads",
+   "detail": "Scheduler service properties, pool MBeans, thread names and states"
+  },
+  {
+   "id": "replication",
+   "layer": "sling",
+   "label": "Replication agents",
+   "detail": "Agent MBean allowlist and queue statistics"
+  },
+  {
+   "id": "workflow",
+   "layer": "sling",
+   "label": "Workflow instances",
+   "detail": "/var/workflow/instances and /etc/workflow/instances, four properties each; model existence; purge configurations"
+  },
+  {
+   "id": "osgi-framework",
+   "layer": "osgi",
+   "label": "OSGi framework",
+   "detail": "Bundles, manifest headers (allowlist), wiring, start levels"
+  },
+  {
+   "id": "scr",
+   "layer": "osgi",
+   "label": "Declarative Services",
+   "detail": "ServiceComponentRuntime DTOs"
+  },
+  {
+   "id": "configadmin",
+   "layer": "osgi",
+   "label": "ConfigurationAdmin",
+   "detail": "PID and change count; values only for an allowlist of 14 PIDs"
+  },
+  {
+   "id": "htl-apps",
+   "layer": "osgi",
+   "label": "/apps HTL scripts",
+   "detail": "data-sly-use identifiers only; never /libs, never renders"
+  },
+  {
+   "id": "service-users",
+   "layer": "osgi",
+   "label": "Service users",
+   "detail": "Service-user mappings and their users under /home"
+  },
+  {
+   "id": "oak-jmx",
+   "layer": "oak",
+   "label": "Oak JMX",
+   "detail": "Async lanes, checkpoints, segment store, sessions, counters; attributes only, no operation"
+  },
+  {
+   "id": "oak-index",
+   "layer": "oak",
+   "label": "/oak:index",
+   "detail": "Index definitions"
+  },
+  {
+   "id": "observation",
+   "layer": "oak",
+   "label": "Observation queue",
+   "detail": "Longest JCR listener backlog (JMX)"
+  },
+  {
+   "id": "blob-store",
+   "layer": "oak",
+   "label": "Blob store",
+   "detail": "Blob GC JMX and DataStore PID identity; never binaries"
+  },
+  {
+   "id": "maintenance",
+   "layer": "oak",
+   "label": "Maintenance windows",
+   "detail": "Windows under /conf/global, /apps, /libs and their history under /var/eventing/jobs"
+  },
+  {
+   "id": "jvm",
+   "layer": "runtime",
+   "label": "JVM",
+   "detail": "Live heap after collection and GC time"
+  }
+ ],
+ "packages": [
+  {
+   "id": "pkg-helper",
+   "name": "adobe/mev:cq-mev-helper",
+   "file": "cq-mev-helper-local-author-<version>.zip",
+   "filterRoots": [
+    "/apps/cq-mev-helper/install",
+    "/apps/cq-mev-helper/osgiconfig",
+    "/adobe/mev"
+   ],
+   "hosts": [
+    "b-helper",
+    "b-connector-api"
+   ],
+   "required": true
+  },
+  {
+   "id": "pkg-connectors",
+   "name": "adobe/mev:cq-mev-connectors",
+   "filterRoots": [
+    "/apps/cq-mev-connectors/install"
+   ],
+   "hosts": [
+    "b-jev",
+    "b-anthropic",
+    "b-openai"
+   ],
+   "required": false,
+   "note": "Optional. Installs disabled. No key may be configured on any instance until corporate guidance permits it."
+  }
+ ],
+ "bundles": [
+  {
+   "id": "b-helper",
+   "bsn": "com.adobe.aem.cq-mev-helper",
+   "module": "cq-mev-helper",
+   "exports": [],
+   "package": "pkg-helper"
+  },
+  {
+   "id": "b-connector-api",
+   "bsn": "com.adobe.aem.cq-mev-connector-api",
+   "module": "connectors/api",
+   "exports": [
+    "com.adobe.aem.mev.connector 1.1.0",
+    "com.adobe.aem.mev.connector.support 1.1.0"
+   ],
+   "package": "pkg-helper",
+   "note": "The contract only; it can't reach a model"
+  },
+  {
+   "id": "b-jev",
+   "bsn": "com.adobe.aem.cq-mev-connector-jev",
+   "module": "connectors/jev",
+   "exports": [],
+   "package": "pkg-connectors"
+  },
+  {
+   "id": "b-anthropic",
+   "bsn": "com.adobe.aem.cq-mev-connector-anthropic",
+   "module": "connectors/anthropic",
+   "exports": [],
+   "package": "pkg-connectors"
+  },
+  {
+   "id": "b-openai",
+   "bsn": "com.adobe.aem.cq-mev-connector-openai",
+   "module": "connectors/openai",
+   "exports": [],
+   "package": "pkg-connectors"
+  }
+ ],
+ "gates": [
+  {
+   "id": "access",
+   "label": "Access gate",
+   "classes": [
+    "Web.authorize",
+    "WebConsoleAccess"
+   ],
+   "rule": "Both must pass: the helper's marker check with the caller's own session (cq-mev-helper-operators, cq-mev-helper-inference-operators, administrators) AND the instance's Felix Web Console rule (default users = [admin]).",
+   "answers": [
+    "403 access_denied",
+    "503 access_check_failed (not a denial)"
+   ],
+   "evidence": "WebConsoleAccessSourceGuardTest"
+  },
+  {
+   "id": "conditions",
+   "label": "Run conditions",
+   "classes": [
+    "RunConditions"
+   ],
+   "rule": "Checked before every capture.",
+   "states": [
+    {
+     "state": "warm",
+     "example": "live heap >= 75 %, GC >= 10 %",
+     "answer": "runs, and says so"
+    },
+    {
+     "state": "hot",
+     "example": "live heap >= 90 %, GC >= 20 %, instance Sling jobs stalled",
+     "answer": "409 run_conditions_hot; only an explicit yes runs it"
+    },
+    {
+     "state": "backed-up",
+     "example": "helper queue suspended or >= 10 jobs; >= 7,500 observation changes",
+     "answer": "503 queues_backed_up; no override"
+    },
+    {
+     "state": "thrashing",
+     "example": "GC pauses >= 50 % of the window",
+     "answer": "503 jvm_thrashing; no override"
+    }
+   ],
+   "evidence": "RunConditionsTest"
+  },
+  {
+   "id": "single-flight",
+   "label": "One capture at a time",
+   "classes": [
+    "JobService"
+   ],
+   "rule": "content-architecture, sling-jobs, packages, htl-use-classes and workflow-instances each allow one capture at a time.",
+   "answers": [
+    "409 capture_in_progress"
+   ]
+  },
+  {
+   "id": "consent",
+   "label": "Exact-payload consent",
+   "classes": [
+    "InferenceServlet",
+    "PublisherInference"
+   ],
+   "rule": "A hosted question sends nothing before the operator reviews the exact bytes; consent binds requestHash = provider + endpoint + model + body. An uncertain dispatch is never retried.",
+   "evidence": "test-question-ui.cjs (consent tests, PR #334)"
+  }
+ ],
+ "blocks": [
+  {
+   "id": "console-ui",
+   "label": "Console",
+   "group": "surface",
+   "status": "built",
+   "summary": "/adobe/mev/ui: one static page, vanilla JS, strict CSP, text-only rendering.",
+   "parts": [
+    "UiServlet",
+    "ui/index.html (738 lines)",
+    "ui/app.js (3,302 lines)",
+    "ui/app.css"
+   ]
+  },
+  {
+   "id": "routes",
+   "label": "Native routes",
+   "group": "edge",
+   "status": "built",
+   "summary": "22 exact URI templates. GETs bypass Sling request processing (#170), so pages, pulse and run reads keep answering when Sling fails. POSTs go through Sling.",
+   "parts": [
+    "NativeRoutes (22 RequestProcessor registrations)",
+    "jcr_root/adobe/mev/.content.xml (11 nodes)"
+   ]
+  },
+  {
+   "id": "access-gate",
+   "label": "Access gate",
+   "group": "gate",
+   "status": "built",
+   "summary": "Every page, API route and the pulse pass Web.authorize.",
+   "parts": [
+    "Web.authorize",
+    "WebConsoleAccess",
+    "/var/cq-mev-helper/{access,inference-access,credential-admin,maintenance-admin} markers"
+   ]
+  },
+  {
+   "id": "api",
+   "label": "API v1",
+   "group": "edge",
+   "status": "built",
+   "summary": "/adobe/mev/api/v1: jobs, recipes, relationships, pulse, purge, inference, settings, content roots and roll-up.",
+   "parts": [
+    "ApiServlet",
+    "RelationshipsServlet",
+    "PulseServlet",
+    "PurgeServlet",
+    "InferenceServlet",
+    "SettingsServlet"
+   ]
+  },
+  {
+   "id": "run-conditions",
+   "label": "Run conditions",
+   "group": "gate",
+   "status": "built",
+   "summary": "Don't throw fuel on a hot instance; don't add a capture to a backed-up queue.",
+   "parts": [
+    "RunConditions"
+   ]
+  },
+  {
+   "id": "pulse",
+   "label": "Live pulse",
+   "group": "surface",
+   "status": "built",
+   "summary": "Four tiles, sampled every 5 s while the tab is visible. Stored nowhere; not evidence.",
+   "parts": [
+    "PulseServlet",
+    "tile-jobs",
+    "tile-indexing",
+    "tile-observation",
+    "tile-jvm"
+   ],
+   "reads": [
+    "job-queues",
+    "oak-jmx",
+    "observation",
+    "jvm"
+   ],
+   "readsSource": "cq-mev-helper/README.md, Reading the pulse"
+  },
+  {
+   "id": "job-service",
+   "label": "Job service",
+   "group": "core",
+   "status": "built",
+   "summary": "Submits captures, consumes them as Sling jobs on one ordered queue, and reconciles every 30 s.",
+   "parts": [
+    "JobService (submit*, JobConsumer)",
+    "topic com/adobe/mev/helper/assess",
+    "queue cq-mev-helper (ORDERED, maxparallel 1, 2 retries)",
+    "cq-mev-helper-reconciliation (every 30 s)"
+   ]
+  },
+  {
+   "id": "recipes-osgi",
+   "label": "OSGi recipes",
+   "group": "recipes",
+   "layer": "osgi",
+   "status": "built",
+   "parts": [
+    "osgi-relationships@1",
+    "htl-use-classes@1",
+    "bundle-provenance@1",
+    "osgi-settings@1",
+    "local-bundle-runtime-evidence@1",
+    "bundle-publisher-inference@2"
+   ]
+  },
+  {
+   "id": "recipes-oak",
+   "label": "Oak recipes",
+   "group": "recipes",
+   "layer": "oak",
+   "status": "built",
+   "parts": [
+    "repository-vitals@1",
+    "index-complexity@1",
+    "blob-store@1"
+   ]
+  },
+  {
+   "id": "recipes-sling",
+   "label": "Sling recipes",
+   "group": "recipes",
+   "layer": "sling",
+   "status": "built",
+   "parts": [
+    "scheduler-threads@1",
+    "replication-agents@1",
+    "sling-jobs@1",
+    "workflow-instances@1"
+   ]
+  },
+  {
+   "id": "recipes-packages",
+   "label": "Package recipe",
+   "group": "recipes",
+   "layer": "packages",
+   "status": "built",
+   "parts": [
+    "packages@1"
+   ]
+  },
+  {
+   "id": "recipes-content",
+   "label": "Content recipe",
+   "group": "recipes",
+   "layer": "content",
+   "status": "built",
+   "parts": [
+    "content-architecture@1"
+   ]
+  },
+  {
+   "id": "store",
+   "label": "Sealed store",
+   "group": "core",
+   "status": "built",
+   "summary": "Seals each snapshot with its SHA-256 in one save; never changes it. Per-recipe folders, newest 100 runs per recipe, a byte budget (#330).",
+   "parts": [
+    "JobStore",
+    "/var/cq-mev-helper/jobs/<recipe>/<uuid>/{metadata,snapshot,result}",
+    "purge (administrators only)"
+   ]
+  },
+  {
+   "id": "catalogs",
+   "label": "Catalogs",
+   "group": "core",
+   "status": "built",
+   "summary": "Deterministic checks over a sealed snapshot. No repository or runtime call.",
+   "parts": [
+    "osgi-stinks@5",
+    "content-stinks@3",
+    "package-stinks@3",
+    "sling-job-stinks@2",
+    "htl-use-stinks@1",
+    "workflow-stinks@3",
+    "settings-stinks@1",
+    "recipe grades (5 recipes)"
+   ]
+  },
+  {
+   "id": "diffs",
+   "label": "Diffs",
+   "group": "core",
+   "status": "built",
+   "summary": "New since an earlier run, by subject key.",
+   "parts": [
+    "StinkDiff (osgi-stinks-diff.v1)",
+    "ContentDiff (content-stinks-diff.v1)",
+    "PackageDiff (package-stinks-diff.v1)"
+   ]
+  },
+  {
+   "id": "questions",
+   "label": "Explain and questions",
+   "group": "core",
+   "status": "built",
+   "summary": "Answers from saved graphs without capturing: Explain, local questions, class visibility.",
+   "parts": [
+    "OsgiDiagnosis",
+    "OsgiQuestions (captured-component-state@1)",
+    "ClassVisibility (class-visibility@1)"
+   ]
+  },
+  {
+   "id": "inference",
+   "label": "Hosted question",
+   "group": "outbound",
+   "status": "built",
+   "summary": "One reviewed question: five manifest fields of one bundle. Off: no keys.",
+   "parts": [
+    "PublisherInference",
+    "Connectors (helper side)",
+    "InferenceServlet"
+   ]
+  },
+  {
+   "id": "connector-api",
+   "label": "Connector contract",
+   "group": "outbound",
+   "status": "built",
+   "summary": "Shipped in the helper package; can't reach a model by itself.",
+   "parts": [
+    "ModelConnector",
+    "BoundedConnector",
+    "ProtectedSettings"
+   ]
+  },
+  {
+   "id": "connectors",
+   "label": "Provider connectors",
+   "group": "outbound",
+   "status": "built",
+   "summary": "jev, anthropic, openai. Optional package; installs disabled; no keys.",
+   "parts": [
+    "JevConnector",
+    "AnthropicConnector",
+    "OpenAiConnector"
+   ]
+  },
+  {
+   "id": "settings",
+   "label": "Settings page",
+   "group": "surface",
+   "status": "built",
+   "summary": "/adobe/mev/settings: connector key enrollment (administrators; don't) and the read-only instance-role declaration.",
+   "parts": [
+    "SettingsServlet",
+    "ui/settings.html",
+    "InstanceRole"
+   ]
+  },
+  {
+   "id": "pinned-baselines",
+   "label": "Pinned baselines",
+   "group": "core",
+   "status": "designed",
+   "issue": 188,
+   "summary": "Pin a run as the baseline a diff compares against, so purge keeps it (#188)."
+  },
+  {
+   "id": "scheduled-captures",
+   "label": "Scheduled captures",
+   "group": "core",
+   "status": "designed",
+   "issue": 189,
+   "summary": "Weekly around the full-compaction window, under the service user, never during compaction."
+  },
+  {
+   "id": "health-checks",
+   "label": "Health checks cq-mev-live and cq-mev-evidence",
+   "group": "surface",
+   "status": "designed",
+   "issue": 190,
+   "summary": "For a managed-services provider's upstream alerting. OK never means healthy."
+  },
+  {
+   "id": "launches",
+   "label": "launches@1",
+   "group": "recipes",
+   "layer": "content",
+   "status": "deferred",
+   "issue": 191
+  }
+ ],
+ "recipes": [
+  {
+   "id": "osgi-relationships@1",
+   "name": "OSGi relationships",
+   "question": "What is AEM waiting for, and what changed in the OSGi framework since the last graph?",
+   "layer": "osgi",
+   "card": "relationships",
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:bundles",
+    "capture:services",
+    "capture:configurations",
+    "capture:descriptions",
+    "capture:wires",
+    "capture:stability"
+   ],
+   "diff": "cq-mev.osgi-stinks-diff.v1",
+   "findings": "osgi-stinks@5",
+   "guard": [
+    "HouseRulesSourceGuardTest#osgiRelationshipsNeverObtainsServicesChangesStateOrReadsConfigurationValues"
+   ],
+   "readsFrom": [
+    "OSGi framework: bundles, wiring and start levels",
+    "Declarative Services runtime records",
+    "ConfigurationAdmin: PIDs and change counts only"
+   ],
+   "cost": "The heaviest: about 18 KB of graph per bundle, up to 2,000 bundles, stored gzipped. Memory is checked before capture and before every read",
+   "neverReads": "Service objects, configuration values (only PID and change count), raw bundle locations, activation-failure text",
+   "areas": [
+    "osgi-framework",
+    "scr",
+    "configadmin"
+   ]
+  },
+  {
+   "id": "htl-use-classes@1",
+   "name": "HTL Use classes",
+   "question": "Can the script class loader load every Java class an HTL script under /apps names?",
+   "layer": "osgi",
+   "card": "htl",
+   "sealed": "submission",
+   "callerSession": "HTL scripts under `/apps`",
+   "stages": [],
+   "diff": null,
+   "findings": "htl-use-stinks@1",
+   "guard": [
+    "HtlUseTest#theCaptureReadsOnlyItsAllowlistAndNeverLoadsRendersQueriesOrWrites"
+   ],
+   "readsFrom": [
+    "`data-sly-use` identifiers in HTL scripts under `/apps`",
+    "Bundle exports and entries"
+   ],
+   "cost": "Walks `/apps` (300,000 nodes, 20 s)",
+   "neverReads": "Script text beyond `data-sly-use` identifiers; never loads a class or renders; `/libs`",
+   "areas": [
+    "htl-apps",
+    "osgi-framework"
+   ]
+  },
+  {
+   "id": "bundle-provenance@1",
+   "name": "Bundle provenance",
+   "question": "Who declares this bundle's origin and license?",
+   "layer": "osgi",
+   "card": "provenance",
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:manifests"
+   ],
+   "diff": null,
+   "findings": null,
+   "guard": [
+    "HouseRulesSourceGuardTest#bundleProvenanceReadsManifestMetadataOnlyAndNeverCallsAModel"
+   ],
+   "readsFrom": [
+    "Allowlisted bundle manifest headers"
+   ],
+   "cost": "Small: manifest metadata",
+   "neverReads": "Anything beyond allowlisted manifest headers; never calls a model, even with hosted inference enabled",
+   "areas": [
+    "osgi-framework"
+   ]
+  },
+  {
+   "id": "osgi-settings@1",
+   "name": "Settings & installer",
+   "question": "Which reviewed configuration settings differ from safe defaults, and is the OSGi installer alive?",
+   "layer": "osgi",
+   "card": "settings",
+   "sealed": "job",
+   "callerSession": "Service-user mappings and their accounts",
+   "stages": [
+    "capture:settings",
+    "capture:installer"
+   ],
+   "diff": null,
+   "findings": "settings-stinks@1",
+   "guard": [
+    "OsgiSettingsTest#sourceNeverReadsBeyondTheAllowlistOrInvokesAnything",
+    "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly"
+   ],
+   "readsFrom": [
+    "Allowlisted keys of a fixed list of configuration PIDs",
+    "OSGi installer registrations and worker threads",
+    "Service-user mappings and their accounts"
+   ],
+   "cost": "A fixed list of 14 PIDs, plus thread names",
+   "neverReads": "Keys outside the allowlist, secrets, the installer's resource list",
+   "areas": [
+    "configadmin",
+    "service-users",
+    "scheduler"
+   ]
+  },
+  {
+   "id": "local-bundle-runtime-evidence@1",
+   "name": "Selected bundle runtime evidence",
+   "question": "What is this one bundle wired to right now?",
+   "layer": "osgi",
+   "card": null,
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:bundle"
+   ],
+   "diff": null,
+   "findings": null,
+   "guard": [
+    "HouseRulesSourceGuardTest#bundleRuntimeEvidenceNeverReadsJarsConfigurationOrContent"
+   ],
+   "readsFrom": [
+    "One bundle's current revision and wiring"
+   ],
+   "cost": "Small, one bundle",
+   "neverReads": "Service objects, JARs, configuration, content, installer data",
+   "areas": [
+    "osgi-framework"
+   ]
+  },
+  {
+   "id": "bundle-publisher-inference@2",
+   "name": "Model publisher suggestion",
+   "question": "Which publisher does a hosted model suggest for one bundle, from five reviewed manifest fields?",
+   "layer": "osgi",
+   "card": null,
+   "sealed": "submission",
+   "callerSession": null,
+   "stages": [],
+   "diff": null,
+   "findings": null,
+   "guard": [
+    "HouseRulesSourceGuardTest#publisherInferenceReadsOnlyItsSealedProvenanceSnapshot"
+   ],
+   "readsFrom": [
+    "Five manifest fields of one bundle, from a sealed `bundle-provenance@1` snapshot"
+   ],
+   "cost": "One paid request, after exact-payload review",
+   "neverReads": "Everything but five manifest fields of one bundle. **Not usable: no keys**",
+   "areas": []
+  },
+  {
+   "id": "repository-vitals@1",
+   "name": "Repository vitals",
+   "question": "Is Oak indexing, checkpointing, collecting garbage and serving queries normally right now?",
+   "layer": "oak",
+   "card": "vitals",
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:indexing",
+    "capture:checkpoints",
+    "capture:query-engine",
+    "capture:repository-stats",
+    "capture:observation",
+    "capture:segment-store",
+    "capture:caches",
+    "capture:sessions"
+   ],
+   "diff": null,
+   "findings": "grades",
+   "guard": [
+    "ApiSecurityTest#pulseReadsAttributesOnlyAndNeverInvokesOrWritesManagementState"
+   ],
+   "readsFrom": [
+    "Allowlisted Oak MBean attributes: indexing lanes, checkpoints, query engine, repository statistics, observation, segment store, caches and sessions"
+   ],
+   "cost": "JMX attributes only, 10 s deadline",
+   "neverReads": "MBean operations, error and log text, index contents, repository content",
+   "areas": [
+    "oak-jmx",
+    "observation"
+   ]
+  },
+  {
+   "id": "index-complexity@1",
+   "name": "Index complexity analysis",
+   "question": "How complex is this indexing problem, and which path does it need before anyone acts?",
+   "layer": "oak",
+   "card": "index",
+   "sealed": "job",
+   "callerSession": "`/oak:index`",
+   "stages": [
+    "capture:lanes",
+    "capture:progress",
+    "capture:failures",
+    "capture:indexes",
+    "capture:checkpoints",
+    "capture:environment"
+   ],
+   "diff": null,
+   "findings": "grades",
+   "guard": [
+    "ApiSecurityTest#indexComplexityReadsAttributesOnlyAndNeverKeepsFailureTextOrInvokesOperations"
+   ],
+   "readsFrom": [
+    "Allowlisted Oak async-lane MBean attributes, twice, 15 s apart",
+    "Index definitions under `/oak:index`"
+   ],
+   "cost": "Two JMX samples 15 s apart, so other captures queue behind it",
+   "neverReads": "MBean operations (no catch-up, abort or pause); failure traces are reduced to a category in memory, and no message is kept",
+   "areas": [
+    "oak-jmx",
+    "oak-index"
+   ]
+  },
+  {
+   "id": "blob-store@1",
+   "name": "Blob store",
+   "question": "Are blob reads and writes failing, and what DataStore is configured?",
+   "layer": "oak",
+   "card": "blobstore",
+   "sealed": "job",
+   "callerSession": "Maintenance windows and their history",
+   "stages": [
+    "capture:stats",
+    "capture:gc",
+    "capture:datastore-caches",
+    "capture:topology",
+    "capture:active-deletion",
+    "capture:maintenance"
+   ],
+   "diff": null,
+   "findings": "grades",
+   "guard": [
+    "ApiSecurityTest#blobStoreSourceNeverInvokesAnOperationOrReadsGlobalMarkStatsAConfigurationValueOrABinary"
+   ],
+   "readsFrom": [
+    "Allowlisted blob store and Blob GC MBean attributes",
+    "DataStore configuration PID identity",
+    "The declared instance role",
+    "Maintenance windows and their history"
+   ],
+   "cost": "JMX plus configuration PID identity",
+   "neverReads": "MBean operations, configuration values, binaries, the maintenance history's message text",
+   "areas": [
+    "blob-store",
+    "maintenance"
+   ]
+  },
+  {
+   "id": "scheduler-threads@1",
+   "name": "Scheduler & threads",
+   "question": "Is each async lane's scheduled task still registered, and is its thread pool starved or stuck?",
+   "layer": "sling",
+   "card": "scheduler",
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:scheduled-jobs",
+    "capture:thread-pools",
+    "capture:lane-threads"
+   ],
+   "diff": null,
+   "findings": "grades",
+   "guard": [
+    "ApiSecurityTest#schedulerThreadsSourceNeverInvokesAnOperationOrReadsAStackOrSchedulerOrJobPayload",
+    "SchedulerThreadsTest#neverInvokesAnMBeanOperationOrReadsAThreadStackOrSchedulerPayload"
+   ],
+   "readsFrom": [
+    "Scheduler service properties",
+    "Thread-pool MBeans",
+    "Thread names and states"
+   ],
+   "cost": "Service properties, pool MBeans, thread names and states",
+   "neverReads": "Scheduler or MBean operations, thread stacks, payloads",
+   "areas": [
+    "scheduler"
+   ]
+  },
+  {
+   "id": "replication-agents@1",
+   "name": "Replication agents & queues",
+   "question": "Is content leaving this author, and if not, which agent or queue is holding it?",
+   "layer": "sling",
+   "card": "replication",
+   "sealed": "job",
+   "callerSession": null,
+   "stages": [
+    "capture:agents",
+    "capture:queues",
+    "capture:distribution"
+   ],
+   "diff": null,
+   "findings": "grades",
+   "guard": [
+    "ApiSecurityTest#replicationSourceNeverTouchesQueueContentsConfigurationOrOperations"
+   ],
+   "readsFrom": [
+    "Allowlisted replication and distribution agent MBean attributes",
+    "In-memory Sling queue statistics"
+   ],
+   "cost": "JMX plus in-memory queue statistics",
+   "neverReads": "`QueueNumEntries` (an unbounded query), queue entries and payloads, agent endpoints and credentials",
+   "areas": [
+    "replication",
+    "job-queues",
+    "configadmin"
+   ]
+  },
+  {
+   "id": "sling-jobs@1",
+   "name": "Persisted Sling jobs",
+   "question": "What is waiting under /var/eventing/jobs, and what stinks in it?",
+   "layer": "sling",
+   "card": "jobs",
+   "sealed": "submission",
+   "callerSession": "`/var/eventing/jobs` and the `/oak:index/slingeventJob` definition",
+   "stages": [],
+   "diff": null,
+   "findings": "sling-job-stinks@2",
+   "guard": [
+    "SlingJobsTest#theCaptureReadsNamesOnlyAndNeverQueriesWritesOrObtainsAService"
+   ],
+   "readsFrom": [
+    "Persisted Sling jobs under `/var/eventing/jobs`, by name",
+    "The `slingeventJob` index definition",
+    "Topology and consumer topics"
+   ],
+   "cost": "Walks `/var/eventing/jobs` by name (300,000 nodes, 20 s)",
+   "neverReads": "Job properties and payloads, `findJobs` or any query, queue actions",
+   "areas": [
+    "eventing-jobs"
+   ]
+  },
+  {
+   "id": "workflow-instances@1",
+   "name": "Workflow instances",
+   "question": "How many workflow instances does this instance keep, in which state and of which model, and does the purge keep up?",
+   "layer": "sling",
+   "card": "workflow",
+   "sealed": "submission",
+   "callerSession": "Workflow instance trees and the models they name",
+   "stages": [],
+   "diff": null,
+   "findings": "workflow-stinks@3",
+   "guard": [
+    "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnly"
+   ],
+   "readsFrom": [
+    "Workflow instances under `/var/workflow/instances` and `/etc/workflow/instances`, four properties each",
+    "Whether each model exists",
+    "Workflow purge configurations"
+   ],
+   "cost": "Walks the instance trees, 4 properties each (300,000 nodes, 20 s)",
+   "neverReads": "Payloads, metadata, history, user names",
+   "areas": [
+    "workflow"
+   ]
+  },
+  {
+   "id": "packages@1",
+   "name": "Package store",
+   "question": "What does /etc/packages keep, which installs or uninstalls are landmines, and what stinks in it?",
+   "layer": "packages",
+   "card": "packages",
+   "sealed": "submission",
+   "callerSession": "`/etc/packages`, and at level 3 the roots its packages name",
+   "stages": [],
+   "diff": "cq-mev.package-stinks-diff.v1",
+   "findings": "package-stinks@3",
+   "guard": [
+    "PackagesTest#theCaptureReadsOnlyItsAllowlistAndNeverAFileVaultApiABinaryAQueryOrAWrite"
+   ],
+   "readsFrom": [
+    "Package definitions under `/etc/packages`",
+    "Level 2: package sizes",
+    "Level 3: whether each package's roots exist"
+   ],
+   "cost": "You choose: level 1 reads definitions, level 2 adds sizes, level 3 adds up to 10,000 root lookups outside `/etc/packages`",
+   "neverReads": "Package binaries, the FileVault API, Package Manager's list, any write",
+   "areas": [
+    "etc-packages"
+   ]
+  },
+  {
+   "id": "content-architecture@1",
+   "name": "Content architecture (conf + page census)",
+   "question": "What /conf and page-template shape does this content root have, and what stinks in it?",
+   "layer": "content",
+   "card": "architecture",
+   "sealed": "submission",
+   "callerSession": "`/conf` and one `/content` root",
+   "stages": [],
+   "diff": "cq-mev.content-stinks-diff.v1",
+   "findings": "content-stinks@3",
+   "guard": [
+    "ContentArchitectureSecurityTest#neverWritesQueriesOrUsesTheHelpersOwnServiceSession"
+   ],
+   "readsFrom": [
+    "`/conf` buckets and template metadata",
+    "One `/content` root: its pages and seven `jcr:content` properties each"
+   ],
+   "cost": "One `/content` root (300,000 nodes, 20 s)",
+   "neverReads": "Titles, body text, tag values, user identities, queries",
+   "areas": [
+    "conf",
+    "content-root"
+   ]
+  }
+ ],
+ "sessions": {
+  "job": "Captured inside the Sling job with OSGi/JMX APIs; reads no JCR content.",
+  "caller@submit": "Read with the submitting operator's own session at submission and sealed in the request. What the operator can't read looks absent.",
+  "split": "One part read with the operator's session at submission and carried into the job; the rest captured in the job.",
+  "sealed at consent": "Works only from a sealed snapshot; sealed when the operator consents to the exact payload."
+ },
+ "writes": [
+  {
+   "id": "w-jobs",
+   "from": "store",
+   "to": "/var/cq-mev-helper/jobs",
+   "kind": "repository",
+   "who": "service user cq-mev-helper-service (subservice mev-helper-jobs)",
+   "what": "Each run's metadata, sealed snapshot and result; purge deletes here too",
+   "enforcedBy": "HouseRulesSourceGuardTest.onlyTheJobStoreWritesTheRepository",
+   "proof": "test"
+  },
+  {
+   "id": "w-sling-job",
+   "from": "job-service",
+   "to": "Sling job storage",
+   "kind": "framework",
+   "who": "Sling, on JobManager.addJob",
+   "what": "Sling's own record of each capture job (inferred: under /var/eventing/jobs)",
+   "proof": "docs"
+  },
+  {
+   "id": "w-credentials",
+   "from": "settings",
+   "to": "ConfigAdmin PID com.adobe.aem.mev.connector.<provider>.Credentials",
+   "kind": "configuration",
+   "who": "administrators only",
+   "what": "An encrypted connector key. Must not happen until corporate guidance permits it",
+   "evidence": "connectors/api ProtectedSettings.java:77",
+   "proof": "docs"
+  },
+  {
+   "id": "w-install",
+   "from": "pkg-helper",
+   "to": "RepoInit: users, groups, /var/cq-mev-helper, ACLs",
+   "kind": "install",
+   "who": "package install",
+   "what": "Service user, two groups, the /var/cq-mev-helper folders and their ACLs",
+   "proof": "docs"
+  }
+ ],
+ "outbound": {
+  "from": "connectors",
+  "to": "Model provider endpoint",
+  "state": "off",
+  "why": [
+   "The connectors package is optional and installs disabled",
+   "No key may be configured on any instance until corporate guidance permits it",
+   "Every hosted question needs exact-payload review and consent",
+   "Only bundle-publisher-inference@2 exists: five manifest fields of one bundle"
+  ]
+ },
+ "edges": [
+  {
+   "from": "pkg-helper",
+   "to": "b-helper",
+   "kind": "hosts",
+   "evidence": "cq-mev-helper/tools/package.py:58"
+  },
+  {
+   "from": "pkg-helper",
+   "to": "b-connector-api",
+   "kind": "hosts",
+   "evidence": "cq-mev-helper/tools/package.py:59"
+  },
+  {
+   "from": "b-helper",
+   "to": "b-connector-api",
+   "kind": "depends-on",
+   "evidence": "cq-mev-helper/pom.xml:20"
+  },
+  {
+   "from": "connectors",
+   "to": "connector-api",
+   "kind": "implements",
+   "evidence": "ModelConnector / BoundedConnector"
+  },
+  {
+   "from": "console-ui",
+   "to": "routes",
+   "kind": "calls",
+   "evidence": "app.js api() fetch to /adobe/mev/api/v1/*"
+  },
+  {
+   "from": "routes",
+   "to": "access-gate",
+   "kind": "gates",
+   "evidence": "Every helper servlet calls Web.authorize"
+  },
+  {
+   "from": "routes",
+   "to": "api",
+   "kind": "calls",
+   "evidence": "NativeRoutes.bindServlet by resource type"
+  },
+  {
+   "from": "api",
+   "to": "run-conditions",
+   "kind": "gates",
+   "evidence": "RunConditionsTest"
+  },
+  {
+   "from": "api",
+   "to": "job-service",
+   "kind": "calls",
+   "evidence": "ApiServlet -> JobService.submit*"
+  },
+  {
+   "from": "api",
+   "to": "store",
+   "kind": "reads",
+   "evidence": "ApiServlet, RelationshipsServlet read JobStore"
+  },
+  {
+   "from": "job-service",
+   "to": "recipes-osgi",
+   "kind": "calls",
+   "evidence": "JobService dispatch if-chain"
+  },
+  {
+   "from": "job-service",
+   "to": "recipes-oak",
+   "kind": "calls",
+   "evidence": "JobService dispatch if-chain"
+  },
+  {
+   "from": "job-service",
+   "to": "recipes-sling",
+   "kind": "calls",
+   "evidence": "JobService dispatch if-chain"
+  },
+  {
+   "from": "job-service",
+   "to": "recipes-packages",
+   "kind": "calls",
+   "evidence": "JobService.submitPackages (caller session)"
+  },
+  {
+   "from": "job-service",
+   "to": "recipes-content",
+   "kind": "calls",
+   "evidence": "JobService.submitContentArchitecture (caller session)"
+  },
+  {
+   "from": "job-service",
+   "to": "store",
+   "kind": "writes",
+   "evidence": "via JobStore only"
+  },
+  {
+   "from": "recipes-osgi",
+   "to": "store",
+   "kind": "generates",
+   "evidence": "osgi-evidence.v1 and other snapshot schemas (docs/SCHEMAS.md)"
+  },
+  {
+   "from": "store",
+   "to": "catalogs",
+   "kind": "reads",
+   "evidence": "Assessment reads only the sealed document"
+  },
+  {
+   "from": "catalogs",
+   "to": "diffs",
+   "kind": "composes",
+   "evidence": "StinkDiff, ContentDiff, PackageDiff compare findings by subject key"
+  },
+  {
+   "from": "questions",
+   "to": "store",
+   "kind": "reads",
+   "evidence": "RelationshipsServlet -> OsgiDiagnosis, OsgiQuestions, ClassVisibility over saved graphs"
+  },
+  {
+   "from": "pulse",
+   "to": "run-conditions",
+   "kind": "composes",
+   "evidence": "RunConditions uses the pulse readings"
+  },
+  {
+   "from": "inference",
+   "to": "store",
+   "kind": "reads",
+   "evidence": "PublisherInference reads a sealed bundle-provenance@1 snapshot"
+  },
+  {
+   "from": "inference",
+   "to": "connector-api",
+   "kind": "calls",
+   "evidence": "Connectors -> ModelConnector.prepare and send"
+  },
+  {
+   "from": "connectors",
+   "to": "outbound",
+   "kind": "sends",
+   "evidence": "Off: no keys; exact-payload consent",
+   "state": "off"
+  },
+  {
+   "from": "settings",
+   "to": "connector-api",
+   "kind": "calls",
+   "evidence": "SettingsServlet -> ProtectedSettings"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-jev",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-anthropic",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
+  },
+  {
+   "from": "pkg-connectors",
+   "to": "b-openai",
+   "kind": "hosts",
+   "evidence": "connectors/tools/package.py:69"
+  }
+ ],
+ "features": [
+  {
+   "id": "f-pulse",
+   "label": "Pulse",
+   "blocks": [
+    "pulse",
+    "routes",
+    "access-gate"
+   ]
+  },
+  {
+   "id": "f-capture",
+   "label": "Capture cards (13 in 5 groups)",
+   "blocks": [
+    "console-ui",
+    "api",
+    "run-conditions",
+    "job-service",
+    "recipes-osgi",
+    "recipes-oak",
+    "recipes-sling",
+    "recipes-packages",
+    "recipes-content"
+   ]
+  },
+  {
+   "id": "f-findings",
+   "label": "Run view and findings",
+   "blocks": [
+    "api",
+    "store",
+    "catalogs"
+   ]
+  },
+  {
+   "id": "f-compare",
+   "label": "Compare with an earlier run",
+   "blocks": [
+    "diffs",
+    "store"
+   ]
+  },
+  {
+   "id": "f-purge",
+   "label": "Purge old runs (administrators)",
+   "blocks": [
+    "api",
+    "store"
+   ]
+  },
+  {
+   "id": "f-inspect",
+   "label": "Inspect a bundle",
+   "blocks": [
+    "recipes-osgi",
+    "console-ui"
+   ]
+  },
+  {
+   "id": "f-explain",
+   "label": "Explain, questions, class visibility",
+   "blocks": [
+    "questions",
+    "store"
+   ]
+  },
+  {
+   "id": "f-how",
+   "label": "How this works (no request)",
+   "blocks": [
+    "console-ui"
+   ]
+  },
+  {
+   "id": "f-walkthrough",
+   "label": "Index walk-through drawer",
+   "blocks": [
+    "recipes-oak",
+    "console-ui"
+   ]
+  },
+  {
+   "id": "f-hosted",
+   "label": "Hosted question (off)",
+   "blocks": [
+    "inference",
+    "connector-api",
+    "connectors"
+   ]
+  },
+  {
+   "id": "f-settings",
+   "label": "Settings page",
+   "blocks": [
+    "settings"
+   ]
+  }
+ ],
+ "findingContract": {
+  "parts": [
+   {
+    "field": "evidence, subjects",
+    "says": "What was seen, and on which subjects (at most 50 listed; count gives the total)"
+   },
+   {
+    "field": "why",
+    "says": "The operational consequence"
+   },
+   {
+    "field": "notProven",
+    "says": "The limits. Read this before acting"
+   },
+   {
+    "field": "nextCheck",
+    "says": "What a person should look at next, usually by hand and often on a copy"
+   }
+  ],
+  "rules": [
+   "A stink is not a defect verdict, a cause or a remediation",
+   "Finding none is not a clean bill of health",
+   "Unknown is an answer: not-registered is never zero, not-readable is never empty",
+   "A walk that hits its budget says 'at least N'"
+  ],
+  "pending": "Recipe grades have a second shape (code, message, severity) until #313"
+ },
+ "flows": [
+  {
+   "id": "capture-life",
+   "title": "A capture's life",
+   "steps": [
+    {
+     "blocks": [
+      "console-ui"
+     ],
+     "text": "An operator presses Capture on a card in /adobe/mev/ui.",
+     "evidence": "app.js -> POST /adobe/mev/api/v1/jobs.json"
+    },
+    {
+     "blocks": [
+      "routes",
+      "access-gate"
+     ],
+     "text": "NativeRoutes hands the POST to Sling and ApiServlet. Web.authorize checks the helper's markers with the caller's own session and the Web Console rule. A plain no is 403 access_denied.",
+     "evidence": "WebConsoleAccessSourceGuardTest"
+    },
+    {
+     "blocks": [
+      "run-conditions",
+      "pulse"
+     ],
+     "text": "Run conditions read heap, GC time and queues. Hot asks once; backed-up and thrashing refuse with no override.",
+     "evidence": "RunConditionsTest"
+    },
+    {
+     "blocks": [
+      "job-service"
+     ],
+     "text": "A recipe sealed at submission reads now, with the operator's own session, and seals its snapshot in the request. Every other recipe is queued as a Sling job on topic com/adobe/mev/helper/assess; three of them (index complexity, blob store, settings) also read one part with the operator's session at submission and carry it into the job.",
+     "evidence": "JobService.submit*"
+    },
+    {
+     "blocks": [
+      "job-service",
+      "recipes-oak"
+     ],
+     "text": "The ordered queue runs one job at a time. The recipe reads only what its recipe allows, within a fixed budget, and records what it couldn't see.",
+     "evidence": "per-recipe source guards (#327)"
+    },
+    {
+     "blocks": [
+      "store"
+     ],
+     "text": "JobStore seals the snapshot and its SHA-256 in one save under /var/cq-mev-helper/jobs, with the service user. It never changes it.",
+     "evidence": "HouseRulesSourceGuardTest.onlyTheJobStoreWritesTheRepository"
+    },
+    {
+     "blocks": [
+      "store",
+      "catalogs"
+     ],
+     "text": "The catalog assesses the sealed document only. A retry never captures again.",
+     "evidence": "docs/GUIDE.md glossary: Seal"
+    },
+    {
+     "blocks": [
+      "console-ui",
+      "api"
+     ],
+     "text": "The console polls the run's stage timeline and shows findings: evidence, why, not proven, next check.",
+     "evidence": "GET jobs.json/{id}/result"
+    },
+    {
+     "blocks": [
+      "diffs"
+     ],
+     "text": "Compare shows what is new since an earlier run, by subject key.",
+     "evidence": "?view=diff&baseline="
+    },
+    {
+     "blocks": [],
+     "text": "A person decides what to do, outside cq-mev. Nothing in cq-mev offers to fix anything.",
+     "evidence": "README House rules"
+    }
+   ]
+  },
+  {
+   "id": "slow-after-deploy",
+   "title": "The author got slow after this morning's deploy. Why?",
+   "steps": [
+    {
+     "blocks": [
+      "pulse"
+     ],
+     "text": "Pulse first: is the JVM hot or thrashing, a queue at its load cap, the observation queue backed up, a lane failing? A refused capture is itself the answer to 'how bad is it now'."
+    },
+    {
+     "blocks": [
+      "recipes-osgi",
+      "diffs"
+     ],
+     "text": "osgi-relationships@1, then What's new since the previous graph? Bundles whose version or state changed; services that appeared or disappeared; new stinks."
+    },
+    {
+     "blocks": [
+      "recipes-osgi"
+     ],
+     "text": "htl-use-classes@1 if pages render empty: htl-use-class-not-loadable names the script, the line and the class."
+    },
+    {
+     "blocks": [
+      "recipes-oak"
+     ],
+     "text": "index-complexity@1 if the deploy shipped index definitions: pendingReindexes and neverBuilt per lane."
+    },
+    {
+     "blocks": [
+      "recipes-osgi"
+     ],
+     "text": "osgi-settings@1 for debug-logging-configured."
+    },
+    {
+     "blocks": [],
+     "text": "What cq-mev can't tell you: it doesn't measure latency or read request, query or error logs. 'Slow' stays unknown; you get evidence about likely causes."
+    }
+   ]
+  },
+  {
+   "id": "package-uninstall",
+   "title": "Is this package safe to uninstall?",
+   "steps": [
+    {
+     "blocks": [
+      "recipes-packages"
+     ],
+     "text": "Capture packages@1 at level 3 as a user who can read the content roots. A root you can't read looks absent."
+    },
+    {
+     "blocks": [
+      "catalogs"
+     ],
+     "text": "Find the package under Landmines: uninstall-reverts-to-first-install, uninstall-deletes-root (critical, proven from creation dates), uninstall-may-delete-root (a size heuristic), install-rewrites-acls."
+    },
+    {
+     "blocks": [
+      "catalogs"
+     ],
+     "text": "Read notProven: filter rules can narrow a root, and the snapshot is never opened."
+    },
+    {
+     "blocks": [],
+     "text": "Next check: compare the snapshot with the roots today, on a copy. cq-mev never answers 'safe'."
+    }
+   ]
+  },
+  {
+   "id": "async-indexing",
+   "title": "Is async indexing healthy?",
+   "steps": [
+    {
+     "blocks": [
+      "pulse"
+     ],
+     "text": "Async indexing tile: each lane's state. paused is held in memory only; not being run means no run for over 5 minutes."
+    },
+    {
+     "blocks": [
+      "recipes-oak"
+     ],
+     "text": "repository-vitals@1: lane state, bad Lucene indexes, oldest checkpoint, segment-not-found and blob-error counters."
+    },
+    {
+     "blocks": [
+      "recipes-oak",
+      "console-ui"
+     ],
+     "text": "index-complexity@1: grades each lane and failing index L0-L4, with a walk-through. It runs nothing."
+    },
+    {
+     "blocks": [
+      "recipes-sling"
+     ],
+     "text": "scheduler-threads@1 if a lane is not being run: is its task registered, does its pool have a live thread?"
+    },
+    {
+     "blocks": [
+      "recipes-sling"
+     ],
+     "text": "sling-jobs@1: job-lookups-on-stale-index shows when job lookups depend on a failing lane."
+    },
+    {
+     "blocks": [],
+     "text": "healthy is a lane state, not a health certificate for the indexes."
+    }
+   ]
+  }
+ ],
+ "houseRules": [
+  "Read-only to the application: writes only the helper's own records",
+  "No added load on a hot instance; no capture onto a backed-up queue",
+  "Unknown is an answer",
+  "No hidden expensive reads: every recipe has a budget and a never-reads list",
+  "Failure text isn't stored",
+  "Real data stays out of Git",
+  "Nothing is sent to a model implicitly"
+ ],
+ "recipePlacesToday": {
+  "issue": 315,
+  "places": [
+   "the class's RECIPE constant",
+   "JobStore.PLANS (capture stages)",
+   "ApiServlet recipes.json (question, title, inputs)",
+   "JobService submit dispatch (30 submit* methods, if-chains)",
+   "JobStore.scope (purge scope) and diff baseline rules",
+   "index.html card, layer group and session marker",
+   "the UI test's hand-written card lists",
+   "README tables",
+   "app.js: 15 recipe constants, STAGES table, 15 display* functions",
+   "JobStore gzip and size limits"
+  ],
+  "after": "One descriptor data file in the bundle; Java, recipes.json, the UI test, check_repository.py and the anatomy map all read it."
+ },
+ "lessons": [
+  {
+   "id": "queued",
+   "title": "Queued isn't the backlog",
+   "area": "eventing-jobs",
+   "text": "Sling counts at most 10 jobs per topic in memory, so a backlog persisted in the repository doesn't show.",
+   "source": "docs/GUIDE.md section 1"
+  },
+  {
+   "id": "active",
+   "title": "Active doesn't mean working",
+   "area": "scr",
+   "text": "A component can report active after its worker thread has died.",
+   "source": "docs/GUIDE.md section 1"
+  },
+  {
+   "id": "succeeded",
+   "title": "Succeeded doesn't mean compacted",
+   "area": "maintenance",
+   "text": "Revision cleanup records a run that skipped compaction as succeeded.",
+   "source": "docs/GUIDE.md section 1"
+  },
+  {
+   "id": "uninstall",
+   "title": "Uninstall isn't undo",
+   "area": "etc-packages",
+   "text": "FileVault takes a package's snapshot once, at the first install. Uninstall restores that snapshot, and it deletes any filter root that didn't exist back then.",
+   "source": "docs/GUIDE.md section 1"
+  }
+ ],
+ "releases": [
+  {
+   "version": "v0.5.1",
+   "date": "2026-09-25",
+   "added": [
+    "osgi-relationships@1",
+    "repository-vitals@1",
+    "replication-agents@1",
+    "bundle-provenance@1",
+    "local-bundle-runtime-evidence@1",
+    "bundle-publisher-inference@2"
+   ]
+  },
+  {
+   "version": "v0.5.3",
+   "date": "2026-09-25",
+   "added": [
+    "index-complexity@1"
+   ]
+  },
+  {
+   "version": "v0.5.6",
+   "date": "2026-09-27",
+   "added": [
+    "content-architecture@1"
+   ]
+  },
+  {
+   "version": "v0.5.8",
+   "date": "2026-09-28",
+   "added": [
+    "blob-store@1",
+    "scheduler-threads@1",
+    "sling-jobs@1"
+   ]
+  },
+  {
+   "version": "v0.5.12",
+   "date": "2026-09-30",
+   "added": [
+    "htl-use-classes@1",
+    "packages@1"
+   ]
+  },
+  {
+   "version": "v0.5.13",
+   "date": "2026-09-30",
+   "added": [
+    "osgi-settings@1",
+    "workflow-instances@1"
+   ]
+  },
+  {
+   "version": "v0.5.16",
+   "date": "2026-10-01",
+   "added": []
+  }
+ ],
+ "direction": {
+  "title": "Captures for trusted, authorized AI agents",
+  "statements": [
+   "Models reason only over the evidence and findings cq-mev has already captured and sealed, and nothing else (#325, design).",
+   "No model API key is configured on any instance until corporate guidance permits it.",
+   "Nothing is sent implicitly. Every hosted question needs review of the exact payload and consent to it.",
+   "Model answers are advice. They are stored apart from the evidence and never replace it.",
+   "Health checks for upstream alerting (cq-mev-live, cq-mev-evidence) are designed, not built (#190). OK will never mean healthy."
+  ],
+  "source": "docs/ARCHITECTURE.md decisions of 2026-09-24 and 2026-10-01; docs/GUIDE.md section 1; cq-mev-helper/docs/deep-health-plan.md"
+ },
+ "palette": {
+  "source": "cq-mev-helper/src/main/resources/ui/app.css :root",
+  "paper": "#fafbf7",
+  "ink": "#222323",
+  "muted": "#666963",
+  "line": "#e0e2da",
+  "accent": "#bf3324",
+  "accentDark": "#97271b",
+  "green": "#346249",
+  "font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  "mono": "ui-monospace, SFMono-Regular, Consolas, monospace"
+ }
+}
