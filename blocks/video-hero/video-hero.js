@@ -33,6 +33,10 @@ function decorateCopy(cell) {
   if (h1 && first && first !== h1 && first.tagName === 'P' && !first.classList.contains('button-wrapper')) {
     first.classList.add('video-hero-eyebrow');
   }
+  // the hook: with two or more plain paragraphs after the h1, the last one (just above the CTAs)
+  const plain = h1 ? [...cell.querySelectorAll(':scope > h1 ~ p')]
+    .filter((p) => !p.classList.contains('button-wrapper') && p.textContent.trim()) : [];
+  if (plain.length >= 2) plain[plain.length - 1].classList.add('video-hero-hook');
   const ctas = [...cell.querySelectorAll(':scope > p.button-wrapper')];
   if (ctas.length) {
     const row = document.createElement('div');

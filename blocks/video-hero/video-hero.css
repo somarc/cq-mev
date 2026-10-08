@@ -30,6 +30,27 @@ main .video-hero .video-hero-copy h1 {
   overflow-wrap: break-word;
 }
 
+/* the lead states the problem at body size; the hook (cq-mev's answer) carries the weight */
+main .video-hero .video-hero-copy h1 + p {
+  font-size: inherit;
+}
+
+.video-hero .video-hero-hook {
+  max-width: 34em;
+  margin-top: 20px;
+  border-left: 3px solid var(--link-hover-color);
+  padding: 2px 0 2px 18px;
+  color: var(--text-color);
+  font-size: 1.25em;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+}
+
+.video-hero .video-hero-hook strong {
+  font-weight: 700;
+}
+
 .video-hero .video-hero-ctas {
   display: flex;
   flex-wrap: wrap;
@@ -190,9 +211,9 @@ main .video-hero .video-hero-copy h1 {
   }
 }
 
-/* phones: the lead keeps body size, so the film is closer to the first screen */
 @media (width < 900px) {
-  main .video-hero .video-hero-copy h1 + p {
-    font-size: inherit;
+  .video-hero .video-hero-hook {
+    font-size: 1.1em;
+    padding-left: 14px;
   }
 }
