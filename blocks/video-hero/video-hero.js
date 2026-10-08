@@ -195,6 +195,11 @@ function decorateMedia(cell) {
     render();
   });
   video.addEventListener('pause', render);
+  // a browser that cannot decode the film (no H.264) keeps the poster and drops dead controls
+  video.addEventListener('error', () => {
+    video.classList.remove('is-playing');
+    controls.hidden = true;
+  });
   video.addEventListener('ended', () => { if (mode === 'sound') toPreview(); });
   video.addEventListener('loadedmetadata', () => {
     if (Number.isFinite(video.duration)) duration.textContent = formatTime(video.duration);

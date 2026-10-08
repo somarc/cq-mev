@@ -100,6 +100,7 @@ main .video-hero .video-hero-copy h1 {
   cursor: pointer;
 }
 
+.video-hero .video-hero-controls[hidden],
 .video-hero .video-hero-btn[hidden] {
   display: none;
 }
