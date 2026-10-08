@@ -166,3 +166,10 @@ main .video-hero .video-hero-copy h1 {
     transition: none;
   }
 }
+
+/* phones: the lead keeps body size, so the film is closer to the first screen */
+@media (width < 900px) {
+  main .video-hero .video-hero-copy h1 + p {
+    font-size: inherit;
+  }
+}
