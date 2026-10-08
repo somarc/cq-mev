@@ -31,3 +31,41 @@
     order: unset;
   }
 }
+
+/* columns (why): three reasons, each under a rule with a mono eyebrow */
+.columns.why > div {
+  gap: 32px;
+}
+
+.columns.why > div > div {
+  border-top: 1px solid #e0e2da;
+  padding-top: 16px;
+}
+
+.columns.why h3 {
+  margin-top: 0.4em;
+  font-size: var(--heading-font-size-s);
+  font-weight: 600;
+}
+
+.columns.why p {
+  font-size: var(--body-font-size-s);
+  color: var(--text-color);
+}
+
+.columns.why > div > div > p:first-child {
+  margin-top: 0;
+  color: var(--dark-color);
+  font-family: ui-monospace, sfmono-regular, consolas, monospace;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+@media (width >= 900px) {
+  .columns.why > div {
+    align-items: start;
+    gap: 32px;
+  }
+}

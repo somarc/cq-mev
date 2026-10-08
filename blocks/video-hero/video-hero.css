@@ -1,0 +1,175 @@
+/* video-hero. Console tokens from cq-mev-helper ui/app.css :root (see anatomy-story). */
+.video-hero {
+  --vh-paper: #fafbf7;
+  --vh-ink: #222323;
+  --vh-line: #e0e2da;
+  --vh-mono: ui-monospace, sfmono-regular, consolas, monospace;
+
+  padding-top: 32px;
+}
+
+.video-hero > div {
+  display: grid;
+  gap: 32px;
+}
+
+.video-hero .video-hero-eyebrow {
+  margin: 0;
+  color: var(--dark-color);
+  font-family: var(--vh-mono);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+main .video-hero .video-hero-copy h1 {
+  max-width: 17em;
+  margin-top: 0.35em;
+  font-size: clamp(34px, 2.2vw + 20px, 52px);
+  overflow-wrap: break-word;
+}
+
+.video-hero .video-hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.video-hero .video-hero-ctas p.button-wrapper {
+  margin: 0;
+}
+
+.video-hero .video-hero-media {
+  width: 100%;
+  max-width: 560px;
+}
+
+.video-hero .video-hero-frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--vh-line);
+  border-radius: 18px;
+  background: var(--light-color);
+  box-shadow: 0 1px 2px rgb(34 35 35 / 4%), 0 12px 32px rgb(34 35 35 / 6%);
+}
+
+.video-hero .video-hero-frame picture,
+.video-hero .video-hero-frame img,
+.video-hero .video-hero-frame video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-hero .video-hero-frame video {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.video-hero .video-hero-frame video.is-playing {
+  opacity: 1;
+}
+
+.video-hero .video-hero-controls {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.video-hero .video-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  border: 1px solid var(--vh-line);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.video-hero .video-hero-controls[hidden],
+.video-hero .video-hero-btn[hidden] {
+  display: none;
+}
+
+.video-hero .video-hero-btn.primary {
+  border-color: var(--vh-ink);
+  background: var(--vh-ink);
+  color: var(--vh-paper);
+}
+
+.video-hero .video-hero-btn.secondary {
+  background: rgb(250 251 247 / 86%);
+  color: var(--vh-ink);
+  backdrop-filter: blur(6px);
+}
+
+.video-hero .video-hero-btn:hover {
+  border-color: var(--vh-ink);
+}
+
+.video-hero .video-hero-btn:focus-visible {
+  outline: 3px solid var(--vh-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--vh-paper);
+}
+
+.video-hero .video-hero-glyph {
+  font-size: 0.75em;
+}
+
+.video-hero .video-hero-duration {
+  font-family: var(--vh-mono);
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.video-hero .video-hero-caption {
+  margin: 12px 0 0;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+  line-height: 1.45;
+}
+
+@media (width >= 900px) {
+  .video-hero > div {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: 56px;
+  }
+
+  .video-hero .video-hero-media {
+    max-width: 540px;
+  }
+
+  .video-hero .video-hero-media-cell {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-hero .video-hero-frame video {
+    transition: none;
+  }
+}
+
+/* phones: the lead keeps body size, so the film is closer to the first screen */
+@media (width < 900px) {
+  main .video-hero .video-hero-copy h1 + p {
+    font-size: inherit;
+  }
+}
