@@ -116,6 +116,7 @@ function decorateMedia(cell) {
 
   function render() {
     const moving = !video.paused && !video.ended;
+    frame.classList.toggle('is-moving', moving);
     const preview = mode === 'preview';
     const active = document.activeElement;
     sound.hidden = !preview;

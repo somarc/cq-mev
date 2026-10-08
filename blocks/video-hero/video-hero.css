@@ -121,6 +121,29 @@ main .video-hero .video-hero-copy h1 {
   border-color: var(--vh-ink);
 }
 
+/* while the film moves, Pause and Mute turn to glass so they do not cover it */
+.video-hero .video-hero-frame.is-moving .video-hero-btn.secondary {
+  border-color: rgb(250 251 247 / 40%);
+  background: rgb(250 251 247 / 35%);
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+@media (hover: hover) {
+  .video-hero .video-hero-frame.is-moving .video-hero-btn.secondary {
+    opacity: 0.55;
+  }
+
+  .video-hero .video-hero-frame.is-moving:hover .video-hero-btn.secondary {
+    opacity: 1;
+    background: rgb(250 251 247 / 86%);
+  }
+}
+
+.video-hero .video-hero-frame.is-moving .video-hero-btn.secondary:focus-visible {
+  opacity: 1;
+  background: rgb(250 251 247 / 86%);
+}
+
 .video-hero .video-hero-btn:focus-visible {
   outline: 3px solid var(--vh-ink);
   outline-offset: 2px;
