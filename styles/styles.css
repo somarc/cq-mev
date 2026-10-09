@@ -176,6 +176,19 @@ a:hover {
   text-decoration: underline;
 }
 
+/* links inside prose are underlined, so they don't depend on colour or hover (WCAG 1.4.1); the footer and the story already
+   do this. Same specificity as a:any-link, so buttons and block styles still win. */
+:where(main p, main li, main td) a:any-link {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+:where(main p, main li, main td) a:hover {
+  text-decoration-color: currentcolor;
+}
+
 /* buttons */
 p.button-wrapper {
   margin: 12px 0;
