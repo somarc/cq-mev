@@ -1,0 +1,39 @@
+/* a highlighted statement: the hero hook's green rule on a raised card */
+.callout {
+  max-width: 44em;
+  margin-top: 32px;
+  border-left: 3px solid var(--link-hover-color);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 24px;
+  background-color: var(--background-color);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 4%);
+}
+
+.callout > div > div > :first-child {
+  margin-top: 0;
+}
+
+.callout > div > div > :last-child {
+  margin-bottom: 0;
+}
+
+.callout p {
+  font-size: 1.1em;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.callout p > strong:first-child {
+  color: var(--link-hover-color);
+  font-weight: 700;
+}
+
+@media (width < 600px) {
+  .callout {
+    padding: 16px 18px;
+  }
+
+  .callout p {
+    font-size: 1em;
+  }
+}
