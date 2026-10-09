@@ -209,6 +209,7 @@ header .nav-level {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  white-space: nowrap;
   padding: 18px 0 8px;
   color: var(--nav-muted);
   font-size: 12px;
@@ -258,6 +259,7 @@ header .nav-menu .nav-tools {
 header .nav-tools a {
   display: inline-flex;
   gap: 4px;
+  white-space: nowrap;
   padding: 6px 0;
   color: var(--nav-ink);
   font-size: 15px;
@@ -405,6 +407,7 @@ header .nav-ext {
   }
 
   header .nav-menu .nav-tools {
+    flex-wrap: nowrap;
     gap: 16px;
     margin: 16px 0;
     padding-left: 22px;
