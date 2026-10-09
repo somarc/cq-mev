@@ -207,8 +207,13 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadSections(main);
 
-  const { hash } = window.location;
+  const { hash, pathname, search } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
+  // the chapters moved from / to /how-it-works: an old link to a chapter follows them
+  if (hash && !element && pathname === '/') {
+    window.location.replace(`/how-it-works${search}${hash}`);
+    return;
+  }
   if (hash && element) element.scrollIntoView();
 
   loadFooter(doc.querySelector('body > footer'));
