@@ -2,9 +2,9 @@
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
   "scope": "cq-mev-helper and its model connectors.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit e02d949, on main since PRs #345 and #346 (2026-10-03) and not yet in a release; the last release is v0.5.16. Structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
-  "cqMevCommit": "e02d949",
-  "release": "v0.5.16",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit 48ee868, as released in v0.5.19 (2026-10-16). Counts and catalog versions checked against the cq-mev source of release v0.5.19 (commit 53b220d); structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "48ee868",
+  "release": "v0.5.19",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
  },
  "counts": {
@@ -12,7 +12,7 @@
   "bundles": 5,
   "dsComponents": 17,
   "helperRoutes": {
-   "get": 17,
+   "get": 18,
    "post": 5
   },
   "recipes": 15,
@@ -101,7 +101,7 @@
    "id": "eventing-jobs",
    "layer": "sling",
    "label": "/var/eventing/jobs",
-   "detail": "Persisted Sling jobs, by name only; plus /oak:index/slingeventJob and topology"
+   "detail": "Persisted Sling jobs, by name only, and scheduled jobs under /var/eventing/scheduled-jobs, by topic only; plus /oak:index/slingeventJob and topology"
   },
   {
    "id": "job-queues",
@@ -125,7 +125,7 @@
    "id": "workflow",
    "layer": "sling",
    "label": "Workflow instances",
-   "detail": "/var/workflow/instances and /etc/workflow/instances, four properties each; model existence; purge configurations"
+   "detail": "/var/workflow/instances and /etc/workflow/instances, four properties each; model existence and step types; purge configurations"
   },
   {
    "id": "osgi-framework",
@@ -143,7 +143,7 @@
    "id": "configadmin",
    "layer": "osgi",
    "label": "ConfigurationAdmin",
-   "detail": "PID and change count; values only for an allowlist of 14 PIDs"
+   "detail": "PID and change count; values only for an allowlist of 22 PIDs"
   },
   {
    "id": "htl-apps",
@@ -179,7 +179,7 @@
    "id": "blob-store",
    "layer": "oak",
    "label": "Blob store",
-   "detail": "Blob GC JMX and DataStore PID identity; never binaries"
+   "detail": "Blob GC JMX, DataStore PID identity and Oak's repository ID; never binaries"
   },
   {
    "id": "maintenance",
@@ -343,8 +343,8 @@
    "summary": "/adobe/mev/ui: one static page, vanilla JS, strict CSP, text-only rendering.",
    "parts": [
     "UiServlet",
-    "ui/index.html (738 lines)",
-    "ui/app.js (3,302 lines)",
+    "ui/index.html (756 lines)",
+    "ui/app.js (3,634 lines)",
     "ui/app.css"
    ]
   },
@@ -353,9 +353,9 @@
    "label": "Native routes",
    "group": "edge",
    "status": "built",
-   "summary": "22 exact URI templates. GETs bypass Sling request processing (#170), so pages, pulse and run reads keep answering when Sling fails. POSTs go through Sling.",
+   "summary": "23 exact URI templates. GETs bypass Sling request processing (#170), so pages, pulse and run reads keep answering when Sling fails. POSTs go through Sling.",
    "parts": [
-    "NativeRoutes (22 RequestProcessor registrations)",
+    "NativeRoutes (23 RequestProcessor registrations)",
     "jcr_root/adobe/mev/.content.xml (11 nodes)"
    ]
   },
@@ -376,7 +376,7 @@
    "label": "API v1",
    "group": "edge",
    "status": "built",
-   "summary": "/adobe/mev/api/v1: jobs, recipes, relationships, pulse, purge, inference, settings, content roots and roll-up.",
+   "summary": "/adobe/mev/api/v1: jobs, a ZIP download of selected runs, recipes, relationships, pulse, purge, inference, settings, content roots and roll-up.",
    "parts": [
     "ApiServlet",
     "RelationshipsServlet",
@@ -509,13 +509,13 @@
    "status": "built",
    "summary": "Deterministic checks over a sealed snapshot. No repository or runtime call.",
    "parts": [
-    "osgi-stinks@5",
+    "osgi-stinks@7",
     "content-stinks@3",
     "package-stinks@3",
     "sling-job-stinks@2",
-    "htl-use-stinks@1",
-    "workflow-stinks@3",
-    "settings-stinks@1",
+    "htl-use-stinks@2",
+    "workflow-stinks@5",
+    "settings-stinks@2",
     "recipe grades (5 recipes)"
    ]
   },
@@ -642,7 +642,7 @@
     "capture:stability"
    ],
    "diff": "cq-mev.osgi-stinks-diff.v1",
-   "findings": "osgi-stinks@5",
+   "findings": "osgi-stinks@7",
    "guard": [
     "HouseRulesSourceGuardTest#osgiRelationshipsNeverObtainsServicesChangesStateOrReadsConfigurationValues"
    ],
@@ -669,7 +669,7 @@
    "callerSession": "HTL scripts under `/apps`",
    "stages": [],
    "diff": null,
-   "findings": "htl-use-stinks@1",
+   "findings": "htl-use-stinks@2",
    "guard": [
     "HtlUseTest#theCaptureReadsOnlyItsAllowlistAndNeverLoadsRendersQueriesOrWrites"
    ],
@@ -701,10 +701,11 @@
     "HouseRulesSourceGuardTest#bundleProvenanceReadsManifestMetadataOnlyAndNeverCallsAModel"
    ],
    "readsFrom": [
-    "Allowlisted bundle manifest headers"
+    "Allowlisted bundle manifest headers",
+    "Each bundle's location, reduced to a delivery label; the location isn't kept"
    ],
    "cost": "Small: manifest metadata",
-   "neverReads": "Anything beyond allowlisted manifest headers; never calls a model, even with hosted inference enabled",
+   "neverReads": "Anything beyond allowlisted manifest headers and each bundle's location, reduced to a delivery label and never kept; never calls a model, even with hosted inference enabled",
    "areas": [
     "osgi-framework"
    ]
@@ -722,7 +723,7 @@
     "capture:installer"
    ],
    "diff": null,
-   "findings": "settings-stinks@1",
+   "findings": "settings-stinks@2",
    "guard": [
     "OsgiSettingsTest#sourceNeverReadsBeyondTheAllowlistOrInvokesAnything",
     "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly"
@@ -732,7 +733,7 @@
     "OSGi installer registrations and worker threads",
     "Service-user mappings and their accounts"
    ],
-   "cost": "A fixed list of 14 PIDs, plus thread names",
+   "cost": "A fixed list of 22 PIDs, plus thread names",
    "neverReads": "Keys outside the allowlist, secrets, the installer's resource list",
    "areas": [
     "configadmin",
@@ -876,9 +877,10 @@
     "Allowlisted blob store and Blob GC MBean attributes",
     "DataStore configuration PID identity",
     "The declared instance role",
-    "Maintenance windows and their history"
+    "Maintenance windows and their history",
+    "Oak's repository ID (the repository descriptor oak.clusterid)"
    ],
-   "cost": "JMX plus configuration PID identity",
+   "cost": "JMX plus configuration PID identity and one repository descriptor",
    "neverReads": "MBean operations, configuration values, binaries, the maintenance history's message text",
    "areas": [
     "blob-store",
@@ -952,7 +954,7 @@
    "layer": "sling",
    "card": "jobs",
    "sealed": "submission",
-   "callerSession": "`/var/eventing/jobs` and the `/oak:index/slingeventJob` definition",
+   "callerSession": "`/var/eventing/jobs`, `/var/eventing/scheduled-jobs` and the `/oak:index/slingeventJob` definition",
    "stages": [],
    "diff": null,
    "findings": "sling-job-stinks@2",
@@ -961,11 +963,12 @@
    ],
    "readsFrom": [
     "Persisted Sling jobs under `/var/eventing/jobs`, by name",
+    "Scheduled Sling jobs under `/var/eventing/scheduled-jobs`, by topic (`event.job.topic` only)",
     "The `slingeventJob` index definition",
     "Topology and consumer topics"
    ],
-   "cost": "Walks `/var/eventing/jobs` by name (300,000 nodes, 20 s)",
-   "neverReads": "Job properties and payloads, `findJobs` or any query, queue actions",
+   "cost": "Walks `/var/eventing/jobs` by name, then `/var/eventing/scheduled-jobs` (300,000 nodes, 20 s)",
+   "neverReads": "Job properties and payloads (a scheduled job's topic is the one read), `findJobs` or any query, queue actions",
    "areas": [
     "eventing-jobs"
    ]
@@ -980,16 +983,17 @@
    "callerSession": "Workflow instance trees and the models they name",
    "stages": [],
    "diff": null,
-   "findings": "workflow-stinks@3",
+   "findings": "workflow-stinks@5",
    "guard": [
-    "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnly"
+    "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnlyAndEachModelsStepTypes"
    ],
    "readsFrom": [
     "Workflow instances under `/var/workflow/instances` and `/etc/workflow/instances`, four properties each",
-    "Whether each model exists",
-    "Workflow purge configurations"
+    "Whether each model exists, and the type of each of its steps",
+    "Workflow purge configurations",
+    "The workflow job topics of the newest `sling-jobs@1` run of this instance, persisted and scheduled (a helper record)"
    ],
-   "cost": "Walks the instance trees, 4 properties each (300,000 nodes, 20 s)",
+   "cost": "Walks the instance trees, 4 properties each, and each model's step types (300,000 nodes, 20 s)",
    "neverReads": "Payloads, metadata, history, user names",
    "areas": [
     "workflow"
@@ -1014,7 +1018,7 @@
     "Level 2: package sizes",
     "Level 3: whether each package's roots exist"
    ],
-   "cost": "You choose: level 1 reads definitions, level 2 adds sizes, level 3 adds up to 10,000 root lookups outside `/etc/packages`",
+   "cost": "You choose: level 1 reads definitions, level 2 adds sizes, level 3 adds up to 10,000 root lookups outside `/etc/packages`; an optional group reads one group and the groups under it",
    "neverReads": "Package binaries, the FileVault API, Package Manager's list, any write",
    "areas": [
     "etc-packages"
@@ -1770,6 +1774,21 @@
   {
    "version": "v0.5.16",
    "date": "2026-10-01",
+   "added": []
+  },
+  {
+   "version": "v0.5.17",
+   "date": "2026-10-15",
+   "added": []
+  },
+  {
+   "version": "v0.5.18",
+   "date": "2026-10-16",
+   "added": []
+  },
+  {
+   "version": "v0.5.19",
+   "date": "2026-10-16",
    "added": []
   }
  ],
