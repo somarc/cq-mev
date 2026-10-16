@@ -138,7 +138,10 @@ function buildCompare(F, R, L) {
   const cd = L('cmp:diffs', 'Diffs built today');
   const bd = byId(F.blocks, 'diffs') || { parts: [] };
   s('text', { class: 'col-h', x: COL.x, y: 360 }, cd, `Built: ${F.counts.diffViews} diffs`);
-  [['OSGi graph', 'osgi-stinks@5'], ['Content architecture', 'content-stinks@3'], ['Packages', 'package-stinks@3']]
+  // Catalog versions come from the facts, so a catalog bump never leaves a stale version here.
+  const catalogs = (byId(F.blocks, 'catalogs') || { parts: [] }).parts;
+  const catalog = (name) => catalogs.find((p) => p.startsWith(`${name}@`)) || name;
+  [['OSGi graph', catalog('osgi-stinks')], ['Content architecture', catalog('content-stinks')], ['Packages', catalog('package-stinks')]]
     .forEach((d, i) => node(cd, {
       x: COL.x + i * 142, y: 370, w: 134, title: d[0], subs: [d[1]],
     }));
