@@ -97,7 +97,14 @@ function model(t) {
       });
     }
     s.load.forEach((l) => { if (typeof l === 'number') maxLoad = Math.max(maxLoad, l); });
-    return { ...s, at };
+    /* a change is a tremor: the weight of what appeared and of what cleared, by week */
+    const jolts = new Map();
+    s.events.forEach(([w, added, removed]) => {
+      if (w === s.first) return;
+      const weigh = (list) => list.reduce((sum, fi) => sum + (WEIGHT[F[fi].severity] || 1), 0);
+      jolts.set(w, { up: weigh(added), down: weigh(removed) });
+    });
+    return { ...s, at, jolts };
   });
   const last = W - 1;
   const findings = F.map((f, i) => ({
@@ -134,27 +141,46 @@ function geometry(M, width) {
     return base - (typeof load === 'number' ? (load / M.maxLoad) * lift : 0);
   };
   return {
-    width, height, xOf, yOf, n,
+    width, height, xOf, yOf, n, lift,
   };
 }
 
-function pathOf(G, s, r, from, to) {
-  let d = '';
-  for (let w = from; w <= to; w += 1) {
-    if (s.load[w] !== null && s.load[w] !== undefined) {
-      const x = G.xOf(w);
-      const y = G.yOf(s, r, w);
-      if (!d) {
-        d = `M${x.toFixed(1)},${y.toFixed(1)}`;
-      } else {
-        const px = G.xOf(w - 1);
-        const py = G.yOf(s, r, w - 1);
-        const mxp = ((px + x) / 2).toFixed(1);
-        d += ` C${mxp},${py.toFixed(1)} ${mxp},${y.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`;
-      }
-    }
+/* One week of one trace as cubic curves from week w-1 to week w. A week where findings appear
+   overshoots upward, a week where they clear dips: a change is a tremor (see DIRECTION.md). */
+function curves(M, G, s, r, w) {
+  const x0 = G.xOf(w - 1);
+  const y0 = G.yOf(s, r, w - 1);
+  const x1 = G.xOf(w);
+  const y1 = G.yOf(s, r, w);
+  const j = s.jolts.get(w);
+  const unit = G.lift / M.maxLoad;
+  let swing = 0;
+  if (j && j.up) swing = -Math.min(G.lift * 0.9, Math.max(2.5, j.up * unit * 1.6));
+  else if (j && j.down) swing = Math.min(G.lift * 0.6, Math.max(2, j.down * unit * 1.1));
+  if (!swing) {
+    const mx = (x0 + x1) / 2;
+    return { x0, y0, c: [[mx, y0, mx, y1, x1, y1]] };
   }
-  return d;
+  const xm = x1 - (x1 - x0) * 0.32;
+  const ym = (swing < 0 ? Math.min(y0, y1) : Math.max(y0, y1)) + swing;
+  return {
+    x0,
+    y0,
+    c: [
+      [(x0 + xm) / 2, y0, (x0 + xm) / 2, ym, xm, ym],
+      [(xm + x1) / 2, ym, (xm + x1) / 2, y1, x1, y1],
+    ],
+  };
+}
+
+function pathOf(M, G, s, r, from, to) {
+  const f = (v) => v.toFixed(1);
+  const parts = [];
+  for (let w = Math.max(from, s.first); w <= to; w += 1) {
+    if (!parts.length) parts.push(`M${f(G.xOf(w))},${f(G.yOf(s, r, w))}`);
+    else curves(M, G, s, r, w).c.forEach((k) => parts.push(`C${k.map(f).join(' ')}`));
+  }
+  return parts.join(' ');
 }
 
 function paint(ctx, M, G, red) {
@@ -166,13 +192,10 @@ function paint(ctx, M, G, red) {
   ctx.clearRect(0, 0, G.width, G.height);
   ctx.lineCap = 'round';
   const segment = (s, r, w) => {
-    const px = G.xOf(w - 1);
-    const py = G.yOf(s, r, w - 1);
-    const x = G.xOf(w);
-    const y = G.yOf(s, r, w);
+    const k = curves(M, G, s, r, w);
     ctx.beginPath();
-    ctx.moveTo(px, py);
-    ctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
+    ctx.moveTo(k.x0, k.y0);
+    k.c.forEach((c) => ctx.bezierCurveTo(...c));
     ctx.stroke();
   };
   [false, true].forEach((hot) => {
@@ -281,10 +304,12 @@ function drum(M, state, onFocus) {
       return;
     }
     const { s, r } = best;
-    one.setAttribute('d', pathOf(G, s, r, s.first, M.W - 1));
+    one.setAttribute('d', pathOf(M, G, s, r, s.first, M.W - 1));
     let redPath = '';
     for (let k = s.first + 1; k < M.W; k += 1) {
-      if (state.red !== null && s.at[k] && s.at[k].has(state.red)) redPath += ` ${pathOf(G, s, r, k - 1, k)}`;
+      if (state.red !== null && s.at[k] && s.at[k].has(state.red)) {
+        redPath += ` ${pathOf(M, G, s, r, k - 1, k)}`;
+      }
     }
     oneRed.setAttribute('d', redPath.trim());
     overlay.classList.add('is-on');
@@ -437,9 +462,11 @@ function renderRoom(block, data, me, view, onView) {
   I = index(M, state, pick);
   const note = t.note ? el('p', { class: 'fleet-note' }, t.note) : null;
   const footer = el('p', { class: 'fleet-generated' }, `Read ${t.generatedAt ? t.generatedAt.slice(0, 16).replace('T', ' ') : '–'} UTC. `
-    + 'Each trace is one server; it rises with the weight of its findings (landmine 4, stink 3, policy 2, info 1). '
+    + 'Each trace is one server. It rises with the weight of its findings (landmine 4, stink 3, policy 2, '
+    + 'info 1), jolts up in a week when findings appear and dips when they clear. '
     + `A finding is published to the fleet at ${GATE.servers} servers in ${GATE.tenants} tenants.`);
-  block.append(readout(t, view, onView, me), note, cap, ...D.nodes, I.node, footer);
+  const parts = [readout(t, view, onView, me), note, cap, ...D.nodes, I.node, footer];
+  block.append(...parts.filter(Boolean));
   D.first();
 }
 
