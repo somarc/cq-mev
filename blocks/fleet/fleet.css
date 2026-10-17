@@ -1,0 +1,157 @@
+/* fleet: the Fleet dashboard (operators only); tables follow the table block */
+.fleet {
+  --fl-ink: #222323;
+  --fl-muted: #666963;
+  --fl-line: #e0e2da;
+  --fl-head: #f0f1eb;
+  --fl-green: #346249;
+  --fl-mono: ui-monospace, sfmono-regular, consolas, monospace;
+
+  margin: 1.4em 0;
+}
+
+.fleet .fleet-loading,
+.fleet .fleet-generated,
+.fleet .fleet-note,
+.fleet .fleet-who {
+  color: var(--fl-muted);
+  font-size: 15px;
+}
+
+.fleet .fleet-who {
+  text-align: right;
+}
+
+.fleet .fleet-message {
+  padding: 1em 1.2em;
+  border: 1px solid var(--fl-line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.fleet .fleet-message p {
+  margin: 0.4em 0;
+}
+
+.fleet .fleet-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 12px;
+  margin: 1em 0;
+}
+
+.fleet .fleet-stats div {
+  padding: 12px 14px;
+  border: 1px solid var(--fl-line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.fleet .fleet-stats dt {
+  color: var(--fl-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fleet .fleet-stats dd {
+  margin: 4px 0 0;
+  color: var(--fl-ink);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fleet .fleet-section h3 {
+  margin: 1.6em 0 0.5em;
+}
+
+.fleet .fleet-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--fl-line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.fleet .fleet-scroll:focus-visible {
+  outline: 2px solid var(--fl-ink);
+  outline-offset: 2px;
+}
+
+.fleet table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.fleet th,
+.fleet td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--fl-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.fleet th {
+  background: var(--fl-head);
+  color: var(--fl-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fleet td:first-child {
+  min-width: 12em;
+}
+
+.fleet td.fleet-num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.fleet tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ids break at their hyphens only; a narrow screen scrolls the table instead */
+.fleet code {
+  font-family: var(--fl-mono);
+  font-size: 0.92em;
+}
+
+
+.fleet .fleet-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--fl-head);
+  color: var(--fl-ink);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.fleet .fleet-severity-landmine,
+.fleet .fleet-alert-critical {
+  background: #f6dcd8;
+  color: #7a2318;
+}
+
+.fleet .fleet-severity-stink,
+.fleet .fleet-alert-warn {
+  background: #f5ead0;
+  color: #6b4e0d;
+}
+
+.fleet .fleet-severity-policy {
+  background: #dfe8f3;
+  color: #24456b;
+}
+
+.fleet .fleet-severity-info {
+  background: #e3eee7;
+  color: var(--fl-green);
+}
