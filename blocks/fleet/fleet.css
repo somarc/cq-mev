@@ -276,8 +276,8 @@
     grid-template-columns: 1.5em 1fr auto;
     grid-template-areas:
       "glyph id now"
-      ". recipe recipe"
-      ". spark gate";
+      ". recipe spark"
+      ". gate gate";
   }
 
   .fleet .fleet-row .fleet-glyph { grid-area: glyph; }
