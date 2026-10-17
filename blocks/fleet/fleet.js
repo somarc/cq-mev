@@ -373,7 +373,6 @@ function gate(f) {
 
 function index(M, state, onPick) {
   const list = el('ol', { class: 'fleet-index' });
-  const max = Math.max(1, ...M.findings.map((f) => Math.max(...f.spread)));
   const rows = [...M.findings].sort((a, b) => b.now - a.now
     || (WEIGHT[b.severity] || 1) - (WEIGHT[a.severity] || 1) || a.id.localeCompare(b.id));
   const buttons = rows.map((f) => {
@@ -383,7 +382,7 @@ function index(M, state, onPick) {
       el('span', { class: 'fleet-glyph', title: f.severity || 'no severity' }, GLYPH[f.severity] || '·'),
       el('span', { class: 'fleet-id' }, f.id),
       el('span', { class: 'fleet-recipe' }, f.recipe),
-      spark(f.spread, max),
+      spark(f.spread, Math.max(...f.spread)), /* own scale: the count gives the size */
       el('span', { class: 'fleet-now' }, f.now ? plural(f.now, 'server', 'servers') : 'cleared'),
       el('span', { class: 'fleet-gate' }, gate(f)),
     );
