@@ -2,9 +2,9 @@
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
   "scope": "cq-mev-helper and its model connectors.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit 48ee868, as released in v0.5.19 (2026-10-16). Counts and catalog versions checked against the cq-mev source of release v0.5.19 (commit 53b220d); structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
-  "cqMevCommit": "48ee868",
-  "release": "v0.5.19",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit aec702e, as released in v0.5.27 (2026-10-17). Counts and catalog versions checked against the cq-mev source of release v0.5.27 (commit 52f9bcc); structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "aec702e",
+  "release": "v0.5.27",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
  },
  "counts": {
@@ -509,13 +509,13 @@
    "status": "built",
    "summary": "Deterministic checks over a sealed snapshot. No repository or runtime call.",
    "parts": [
-    "osgi-stinks@7",
-    "content-stinks@3",
-    "package-stinks@3",
-    "sling-job-stinks@2",
+    "osgi-stinks@8",
+    "content-stinks@6",
+    "package-stinks@4",
+    "sling-job-stinks@3",
     "htl-use-stinks@2",
-    "workflow-stinks@5",
-    "settings-stinks@2",
+    "workflow-stinks@8",
+    "settings-stinks@3",
     "recipe grades (5 recipes)"
    ]
   },
@@ -642,7 +642,7 @@
     "capture:stability"
    ],
    "diff": "cq-mev.osgi-stinks-diff.v1",
-   "findings": "osgi-stinks@7",
+   "findings": "osgi-stinks@8",
    "guard": [
     "HouseRulesSourceGuardTest#osgiRelationshipsNeverObtainsServicesChangesStateOrReadsConfigurationValues"
    ],
@@ -723,7 +723,7 @@
     "capture:installer"
    ],
    "diff": null,
-   "findings": "settings-stinks@2",
+   "findings": "settings-stinks@3",
    "guard": [
     "OsgiSettingsTest#sourceNeverReadsBeyondTheAllowlistOrInvokesAnything",
     "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly"
@@ -811,10 +811,10 @@
     "ApiSecurityTest#pulseReadsAttributesOnlyAndNeverInvokesOrWritesManagementState"
    ],
    "readsFrom": [
-    "Allowlisted Oak MBean attributes: indexing lanes, checkpoints, query engine, repository statistics, observation, segment store, caches and sessions"
+    "Allowlisted Oak MBean attributes: indexing lanes, checkpoints, query engine and its slow-query list, repository statistics, observation, segment store, caches and sessions"
    ],
    "cost": "JMX attributes only, 10 s deadline",
-   "neverReads": "MBean operations, error and log text, index contents, repository content",
+   "neverReads": "MBean operations, error and log text, index contents, repository content; query statements and thread names are read in memory, reduced to shapes and categories, and never kept",
    "areas": [
     "oak-jmx",
     "observation"
@@ -843,7 +843,9 @@
    ],
    "readsFrom": [
     "Allowlisted Oak async-lane MBean attributes, twice, 15 s apart",
-    "Index definitions under `/oak:index`"
+    "Index definitions under `/oak:index`",
+    "Oak's plan for Sling's vanity-path startup read (EXPLAIN only, no rows)",
+    "The index definitions the product ships, compared in memory with a baseline of its build"
    ],
    "cost": "Two JMX samples 15 s apart, so other captures queue behind it",
    "neverReads": "MBean operations (no catch-up, abort or pause); failure traces are reduced to a category in memory, and no message is kept",
@@ -957,7 +959,7 @@
    "callerSession": "`/var/eventing/jobs`, `/var/eventing/scheduled-jobs` and the `/oak:index/slingeventJob` definition",
    "stages": [],
    "diff": null,
-   "findings": "sling-job-stinks@2",
+   "findings": "sling-job-stinks@3",
    "guard": [
     "SlingJobsTest#theCaptureReadsNamesOnlyAndNeverQueriesWritesOrObtainsAService"
    ],
@@ -980,21 +982,24 @@
    "layer": "sling",
    "card": "workflow",
    "sealed": "submission",
-   "callerSession": "Workflow instance trees and the models they name",
+   "callerSession": "Workflow instance trees, the models they name and those models' versions",
    "stages": [],
    "diff": null,
-   "findings": "workflow-stinks@5",
+   "findings": "workflow-stinks@8",
    "guard": [
-    "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnlyAndEachModelsStepTypes"
+    "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnlyAndEachModelsStepTypes",
+    "WorkflowVersionsTest#theModelVersionReaderReadsTheVersionByNameAndItsDateOnly"
    ],
    "readsFrom": [
-    "Workflow instances under `/var/workflow/instances` and `/etc/workflow/instances`, four properties each",
-    "Whether each model exists, and the type of each of its steps",
+    "Workflow instances under `/var/workflow/instances` and `/etc/workflow/instances`, four properties each, and a running one's `modelVersion` and its first work item's name, `nodeId`, `startTime` and `subType`, and whether that work item's `metaData` has a `failureMessage` (its presence only, never the message)",
+    "Whether each model exists, and the name and type of each of its steps",
+    "Each model's version history: its current version, and the frozen steps and `jcr:created` of each version its long runs run (at most 50 per census)",
+    "How many children `/etc/workflow/models` and `/etc/workflow/launcher/config` hold (counts only)",
     "Workflow purge configurations",
     "The workflow job topics of the newest `sling-jobs@1` run of this instance, persisted and scheduled (a helper record)"
    ],
-   "cost": "Walks the instance trees, 4 properties each, and each model's step types (300,000 nodes, 20 s)",
-   "neverReads": "Payloads, metadata, history, user names",
+   "cost": "Walks the instance trees, 4 properties each, each model's step types and the versions its long runs run (300,000 nodes, 20 s)",
+   "neverReads": "Payloads, metadata values (a failure item's message, stack or step title included), history, user names",
    "areas": [
     "workflow"
    ]
@@ -1009,7 +1014,7 @@
    "callerSession": "`/etc/packages`, and at level 3 the roots its packages name",
    "stages": [],
    "diff": "cq-mev.package-stinks-diff.v1",
-   "findings": "package-stinks@3",
+   "findings": "package-stinks@4",
    "guard": [
     "PackagesTest#theCaptureReadsOnlyItsAllowlistAndNeverAFileVaultApiABinaryAQueryOrAWrite"
    ],
@@ -1034,13 +1039,16 @@
    "callerSession": "`/conf` and one `/content` root",
    "stages": [],
    "diff": "cq-mev.content-stinks-diff.v1",
-   "findings": "content-stinks@3",
+   "findings": "content-stinks@6",
    "guard": [
-    "ContentArchitectureSecurityTest#neverWritesQueriesOrUsesTheHelpersOwnServiceSession"
+    "ContentArchitectureSecurityTest#neverWritesQueriesOrUsesTheHelpersOwnServiceSession",
+    "ContentArchitectureSecurityTest#readsOnlyThePinnedPropertiesAndChildren"
    ],
    "readsFrom": [
     "`/conf` buckets and template metadata",
-    "One `/content` root: its pages and seven `jcr:content` properties each"
+    "One `/content` root: its pages, with seven named `jcr:content` properties and its mixins each, and each live copy root's configuration",
+    "Each folder's `jcr:language`, and `cq:conf` and `jcr:language` on the root and its ancestors up to `/content`",
+    "The resolution, also outside the root: whether each used template, page component (with its `sling:resourceSuperType` chain), blueprint and `/apps/<app>` exists, and each blueprint's live copy marks"
    ],
    "cost": "One `/content` root (300,000 nodes, 20 s)",
    "neverReads": "Titles, body text, tag values, user identities, queries",
@@ -1789,6 +1797,46 @@
   {
    "version": "v0.5.19",
    "date": "2026-10-16",
+   "added": []
+  },
+  {
+   "version": "v0.5.20",
+   "date": "2026-10-16",
+   "added": []
+  },
+  {
+   "version": "v0.5.21",
+   "date": "2026-10-16",
+   "added": []
+  },
+  {
+   "version": "v0.5.22",
+   "date": "2026-10-17",
+   "added": []
+  },
+  {
+   "version": "v0.5.23",
+   "date": "2026-10-17",
+   "added": []
+  },
+  {
+   "version": "v0.5.24",
+   "date": "2026-10-17",
+   "added": []
+  },
+  {
+   "version": "v0.5.25",
+   "date": "2026-10-17",
+   "added": []
+  },
+  {
+   "version": "v0.5.26",
+   "date": "2026-10-17",
+   "added": []
+  },
+  {
+   "version": "v0.5.27",
+   "date": "2026-10-17",
    "added": []
   }
  ],
