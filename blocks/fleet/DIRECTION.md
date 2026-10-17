@@ -50,12 +50,22 @@ Loved media job: none (every mark is data)
 - **Truth:** the live view shows only real digests. The simulated fleet is a separate, labelled view of synthetic
   data and never mixes with live.
 
-## Producer-taste (fill after the preview)
+## Producer-taste (2026-10-17, on the preview through the operators' address, 1440 px and 390 px)
 
 ```text
 Subject: the fleet of AEM servers
-Object:  the seismogram
-Law:     one trace = one server; red = one finding at a time
+Object:  the seismogram (one trace per server on chart-recorder paper)
+Law:     one trace = one server; red = one finding at a time; a change is a tremor
 Silence: cards, donuts, traffic lights, dark mode, loaders, scroll-jack, a second chroma
-Veto:    (after the preview)
+Veto:    keep
 ```
+
+- Stranger name: "a seismograph of many machines, with a red disturbance moving through it." Pass.
+- One object, one law, silence named, technique hidden (the page never names canvas or SVG). Pass.
+- Sibling glance against `/how-it-works` at 1440 px: house paper, sans and grey anatomy boxes there; chart paper,
+  drafting grid, monospace and one red here. Pass.
+- Honest limit: the live view is one quiet trace (local4502) until more servers enrol. The labelled simulated fleet
+  shows the object at 620 servers: a regression arrives as a red staircase, a chronic landmine as steady red threads.
+
+Decisions made on the preview: a change is a tremor (the pen jolts up in a week when findings appear and dips when
+they clear, in proportion to their weight); the pen stays on the paper; each sparkline uses its own scale.
