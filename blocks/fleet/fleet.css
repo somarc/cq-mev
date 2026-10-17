@@ -273,14 +273,19 @@
 
 @media (width <= 760px) {
   .fleet .fleet-row {
-    grid-template-columns: 1.5em 1fr 72px;
+    grid-template-columns: 1.5em 1fr auto;
+    grid-template-areas:
+      "glyph id now"
+      ". recipe recipe"
+      ". spark gate";
   }
 
-  .fleet .fleet-recipe,
-  .fleet .fleet-now,
-  .fleet .fleet-gate {
-    grid-column: 2 / -1;
-  }
+  .fleet .fleet-row .fleet-glyph { grid-area: glyph; }
+  .fleet .fleet-row .fleet-id { grid-area: id; }
+  .fleet .fleet-row .fleet-now { grid-area: now; }
+  .fleet .fleet-row .fleet-recipe { grid-area: recipe; }
+  .fleet .fleet-row .fleet-spark { grid-area: spark; }
+  .fleet .fleet-row .fleet-gate { grid-area: gate; }
 
   .fleet .fleet-who {
     margin-left: 0;

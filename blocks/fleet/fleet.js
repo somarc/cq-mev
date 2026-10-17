@@ -162,7 +162,8 @@ function curves(M, G, s, r, w) {
     return { x0, y0, c: [[mx, y0, mx, y1, x1, y1]] };
   }
   const xm = x1 - (x1 - x0) * 0.32;
-  const ym = (swing < 0 ? Math.min(y0, y1) : Math.max(y0, y1)) + swing;
+  const from = swing < 0 ? Math.min(y0, y1) : Math.max(y0, y1);
+  const ym = Math.min(G.height - 3, Math.max(3, from + swing)); /* the pen stays on the paper */
   return {
     x0,
     y0,
