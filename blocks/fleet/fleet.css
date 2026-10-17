@@ -1,157 +1,293 @@
-/* fleet: the Fleet dashboard (operators only); tables follow the table block */
-.fleet {
-  --fl-ink: #222323;
-  --fl-muted: #666963;
-  --fl-line: #e0e2da;
-  --fl-head: #f0f1eb;
-  --fl-green: #346249;
-  --fl-mono: ui-monospace, sfmono-regular, consolas, monospace;
+/* fleet: the fleet seismogram (blocks/fleet/DIRECTION.md). One field, one ink, one red. */
+.fleet-container {
+  overflow-x: clip; /* the room runs full-bleed */
+}
 
-  margin: 1.4em 0;
+.fleet {
+  --fl-paper: #f2eee3;
+  --fl-grid: #c9d6d2;
+  --fl-ink: #20201c;
+  --fl-muted: #6b6a62;
+  --fl-red: #d23a1e;
+  --fl-mono: ui-monospace, sfmono-regular, 'SF Mono', consolas, monospace;
+
+  margin: 2em calc(50% - 50vw) 0;
+  padding: 22px max(20px, 2.5vw) 36px;
+  background: var(--fl-paper);
+  color: var(--fl-ink);
+  font-family: var(--fl-mono);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .fleet .fleet-loading,
-.fleet .fleet-generated,
-.fleet .fleet-note,
-.fleet .fleet-who {
+.fleet .fleet-generated {
   color: var(--fl-muted);
-  font-size: 15px;
-}
-
-.fleet .fleet-who {
-  text-align: right;
+  font-size: 12px;
 }
 
 .fleet .fleet-message {
-  padding: 1em 1.2em;
-  border: 1px solid var(--fl-line);
-  border-radius: 6px;
-  background: #fff;
+  max-width: 60ch;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
 }
 
 .fleet .fleet-message p {
   margin: 0.4em 0;
 }
 
-.fleet .fleet-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 12px;
-  margin: 1em 0;
+/* ---------- readout ---------- */
+.fleet .fleet-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--fl-ink);
 }
 
-.fleet .fleet-stats div {
-  padding: 12px 14px;
-  border: 1px solid var(--fl-line);
-  border-radius: 6px;
-  background: #fff;
+.fleet .fleet-tag {
+  padding: 1px 6px;
+  border: 1px solid var(--fl-ink);
+  font-size: 11px;
+  letter-spacing: 0.14em;
 }
 
-.fleet .fleet-stats dt {
+.fleet .fleet-views {
+  display: flex;
+  gap: 4px;
+}
+
+.fleet .fleet-views button,
+.fleet .fleet-row {
+  margin: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.fleet .fleet-views button {
+  padding: 1px 8px;
+  border: 1px solid transparent;
+}
+
+.fleet .fleet-views button[aria-pressed="true"] {
+  border-color: var(--fl-ink);
+  background: var(--fl-ink);
+  color: var(--fl-paper);
+}
+
+.fleet .fleet-who {
+  margin-left: auto;
   color: var(--fl-muted);
-  font-size: 12px;
+}
+
+.fleet .fleet-who a {
+  color: inherit;
+}
+
+.fleet .fleet-note {
+  margin: 12px 0 0;
+  padding: 6px 0;
+  border-block: 1px dashed var(--fl-ink);
+}
+
+/* ---------- the red finding ---------- */
+.fleet .fleet-red {
+  margin: 18px 0 10px;
+  font-size: 14px;
+}
+
+.fleet .fleet-red strong {
+  color: var(--fl-red);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
-.fleet .fleet-stats dd {
-  margin: 4px 0 0;
-  color: var(--fl-ink);
-  font-size: 24px;
-  font-variant-numeric: tabular-nums;
+.fleet .fleet-rule {
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  margin-right: 10px;
+  background: var(--fl-red);
+  vertical-align: middle;
 }
 
-.fleet .fleet-section h3 {
-  margin: 1.6em 0 0.5em;
+/* ---------- the drum ---------- */
+.fleet .fleet-drum {
+  position: relative;
+  background-color: var(--fl-paper);
+  background-image:
+    linear-gradient(to right, var(--fl-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--fl-grid) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in srgb, var(--fl-grid) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--fl-grid) 45%, transparent) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  cursor: crosshair;
 }
 
-.fleet .fleet-scroll {
-  overflow-x: auto;
-  border: 1px solid var(--fl-line);
-  border-radius: 6px;
-  background: #fff;
-}
-
-.fleet .fleet-scroll:focus-visible {
-  outline: 2px solid var(--fl-ink);
-  outline-offset: 2px;
-}
-
-.fleet table {
+.fleet .fleet-ink {
+  display: block;
   width: 100%;
-  min-width: 46rem;
-  border-collapse: collapse;
-  font-size: 15px;
-  line-height: 1.5;
 }
 
-.fleet th,
-.fleet td {
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--fl-line);
-  text-align: left;
-  vertical-align: top;
+.fleet .fleet-one {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.fleet th {
-  background: var(--fl-head);
-  color: var(--fl-muted);
+.fleet .fleet-one.is-on {
+  opacity: 1;
+}
+
+.fleet .fleet-one path {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.fleet .fleet-one-trace {
+  stroke: var(--fl-ink);
+  stroke-width: 2.4;
+}
+
+.fleet .fleet-one-red {
+  stroke: var(--fl-red);
+  stroke-width: 2.8;
+}
+
+.fleet .fleet-tip {
+  position: absolute;
+  padding: 3px 8px;
+  border: 1px solid var(--fl-ink);
+  background: color-mix(in srgb, var(--fl-paper) 92%, transparent);
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.fleet .fleet-axis {
+  position: relative;
+  height: 22px;
+  margin: 0 max(20px, 2.5%);
+  color: var(--fl-muted);
+  font-size: 11px;
+}
+
+.fleet .fleet-axis span {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
   white-space: nowrap;
 }
 
-.fleet td:first-child {
-  min-width: 12em;
+.fleet .fleet-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.fleet td.fleet-num {
+/* ---------- the index: the legend is the controller ---------- */
+.fleet .fleet-index {
+  margin: 22px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--fl-ink);
+  list-style: none;
+}
+
+.fleet .fleet-index li {
+  border-bottom: 1px solid color-mix(in srgb, var(--fl-ink) 14%, transparent);
+}
+
+.fleet .fleet-index li.is-cleared {
+  opacity: 0.5;
+}
+
+.fleet .fleet-row {
+  display: grid;
+  grid-template-columns: 1.5em minmax(16ch, 1.6fr) minmax(12ch, 1fr) 72px 11ch minmax(20ch, 1fr);
+  align-items: center;
+  gap: 4px 14px;
+  width: 100%;
+  padding: 7px 4px;
+  text-align: left;
+}
+
+.fleet .fleet-glyph {
+  font-size: 14px;
+  text-align: center;
+}
+
+.fleet .fleet-id {
+  overflow-wrap: anywhere;
+}
+
+.fleet .fleet-row:hover {
+  background: color-mix(in srgb, var(--fl-ink) 5%, transparent);
+}
+
+.fleet .fleet-row:focus-visible {
+  outline: 2px solid var(--fl-ink);
+  outline-offset: -2px;
+}
+
+.fleet .fleet-row[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--fl-red) 8%, transparent);
+}
+
+.fleet .fleet-row[aria-pressed="true"] .fleet-id,
+.fleet .fleet-row[aria-pressed="true"] .fleet-glyph {
+  color: var(--fl-red);
+}
+
+.fleet .fleet-recipe,
+.fleet .fleet-gate {
+  color: var(--fl-muted);
+}
+
+.fleet .fleet-now {
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 
-.fleet tbody tr:last-child td {
-  border-bottom: 0;
+.fleet .fleet-spark polyline {
+  fill: none;
+  stroke: var(--fl-ink);
+  stroke-width: 1.2;
 }
 
-/* ids break at their hyphens only; a narrow screen scrolls the table instead */
-.fleet code {
-  font-family: var(--fl-mono);
-  font-size: 0.92em;
+.fleet .fleet-row[aria-pressed="true"] .fleet-spark polyline {
+  stroke: var(--fl-red);
 }
 
-
-.fleet .fleet-badge {
-  display: inline-block;
-  padding: 1px 8px;
-  border-radius: 10px;
-  background: var(--fl-head);
-  color: var(--fl-ink);
-  font-size: 13px;
-  white-space: nowrap;
+.fleet .fleet-generated {
+  max-width: 90ch;
+  margin-top: 18px;
 }
 
-.fleet .fleet-severity-landmine,
-.fleet .fleet-alert-critical {
-  background: #f6dcd8;
-  color: #7a2318;
-}
+@media (width <= 760px) {
+  .fleet .fleet-row {
+    grid-template-columns: 1.5em 1fr auto;
+    grid-template-areas:
+      "glyph id now"
+      ". recipe spark"
+      ". gate gate";
+  }
 
-.fleet .fleet-severity-stink,
-.fleet .fleet-alert-warn {
-  background: #f5ead0;
-  color: #6b4e0d;
-}
+  .fleet .fleet-row .fleet-glyph { grid-area: glyph; }
+  .fleet .fleet-row .fleet-id { grid-area: id; }
+  .fleet .fleet-row .fleet-now { grid-area: now; }
+  .fleet .fleet-row .fleet-recipe { grid-area: recipe; }
+  .fleet .fleet-row .fleet-spark { grid-area: spark; }
+  .fleet .fleet-row .fleet-gate { grid-area: gate; }
 
-.fleet .fleet-severity-policy {
-  background: #dfe8f3;
-  color: #24456b;
-}
-
-.fleet .fleet-severity-info {
-  background: #e3eee7;
-  color: var(--fl-green);
+  .fleet .fleet-who {
+    margin-left: 0;
+  }
 }
