@@ -178,7 +178,7 @@ export default async function decorate(block) {
     return;
   }
   if (overview.status === 401) {
-    const login = el('a', { class: 'button', href: `/auth/login?return=${encodeURIComponent(returnPath())}` }, 'Sign in with GitHub');
+    const login = el('a', { class: 'button primary', href: `/auth/login?return=${encodeURIComponent(returnPath())}` }, 'Sign in with GitHub');
     message(block, ['The Fleet dashboard is for fleet operators. Sign in with an allowed GitHub account.', login]);
     return;
   }
@@ -189,7 +189,7 @@ export default async function decorate(block) {
   /* No API here (for example on aem.live): the dashboard opens only at the operators' address. */
   const lines = ['The Fleet dashboard opens only at the operators\' address, after a GitHub sign-in.'];
   if (signInLink) {
-    lines.push(el('a', { class: 'button', href: signInLink.href }, 'Open the Fleet dashboard'));
+    lines.push(el('a', { class: 'button primary', href: signInLink.href }, 'Open the Fleet dashboard'));
   }
   message(block, lines);
 }
