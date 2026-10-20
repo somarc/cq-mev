@@ -2,26 +2,26 @@
  "meta": {
   "title": "cq-mev: what it reads, writes and sends",
   "scope": "cq-mev-helper and its model connectors.",
-  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit aec702e, as released in v0.5.27 (2026-10-17). Counts and catalog versions checked against the cq-mev source of release v0.5.27 (commit 52f9bcc); structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
-  "cqMevCommit": "aec702e",
-  "release": "v0.5.27",
+  "facts": "Recipe facts from cq-mev's recipe descriptor (#315) at commit b4c71b4, as released in v0.5.30 (2026-10-19). Counts and catalog versions checked against the cq-mev source of release v0.5.30 (commit 43d3e78); structure and flows compiled from the cq-mev source at main a36449e. Code facts only: no instance data.",
+  "cqMevCommit": "b4c71b4",
+  "release": "v0.5.30",
   "descriptorSchema": "cq-mev.recipe-descriptors.v1"
  },
  "counts": {
   "contentPackages": 2,
   "bundles": 5,
-  "dsComponents": 17,
+  "dsComponents": 18,
   "helperRoutes": {
    "get": 18,
-   "post": 5
+   "post": 6
   },
-  "recipes": 15,
-  "catalogs": 7,
+  "recipes": 17,
+  "catalogs": 9,
   "diffViews": 3,
   "pulseTiles": 4,
-  "captureCards": 13,
+  "captureCards": 15,
   "cardGroups": 5,
-  "callerSessionRecipes": 8
+  "callerSessionRecipes": 10
  },
  "layers": {
   "consoleOrder": [
@@ -143,13 +143,19 @@
    "id": "configadmin",
    "layer": "osgi",
    "label": "ConfigurationAdmin",
-   "detail": "PID and change count; values only for an allowlist of 22 PIDs"
+   "detail": "PID and change count; values only for an allowlist of 25 PIDs"
   },
   {
    "id": "htl-apps",
    "layer": "osgi",
    "label": "/apps HTL scripts",
    "detail": "data-sly-use identifiers only; never /libs, never renders"
+  },
+  {
+   "id": "clientlibs",
+   "layer": "osgi",
+   "label": "Client library folders",
+   "detail": "cq:ClientLibraryFolder nodes under /apps, /libs and /etc, by one indexed query; their css.txt and js.txt lists and source sizes; never source bodies, never builds a library"
   },
   {
    "id": "service-users",
@@ -179,7 +185,13 @@
    "id": "blob-store",
    "layer": "oak",
    "label": "Blob store",
-   "detail": "Blob GC JMX, DataStore PID identity and Oak's repository ID; never binaries"
+   "detail": "Blob GC JMX, DataStore PID identity, Oak's repository ID and revision GC's state; never binaries"
+  },
+  {
+   "id": "binaries",
+   "layer": "oak",
+   "label": "Binary properties",
+   "detail": "Content identity of each binary property under /libs and /apps, and under the roots the operator picks; with the opt-in content-address check, the bytes of data-store binaries under /libs and /apps, at most 256 MiB"
   },
   {
    "id": "maintenance",
@@ -353,10 +365,10 @@
    "label": "Native routes",
    "group": "edge",
    "status": "built",
-   "summary": "23 exact URI templates. GETs bypass Sling request processing (#170), so pages, pulse and run reads keep answering when Sling fails. POSTs go through Sling.",
+   "summary": "24 exact URI templates. GETs bypass Sling request processing (#170), so pages, pulse and run reads keep answering when Sling fails. POSTs go through Sling.",
    "parts": [
-    "NativeRoutes (23 RequestProcessor registrations)",
-    "jcr_root/adobe/mev/.content.xml (11 nodes)"
+    "NativeRoutes (24 RequestProcessor registrations)",
+    "jcr_root/adobe/mev/.content.xml (12 nodes)"
    ]
   },
   {
@@ -376,7 +388,7 @@
    "label": "API v1",
    "group": "edge",
    "status": "built",
-   "summary": "/adobe/mev/api/v1: jobs, a ZIP download of selected runs, recipes, relationships, pulse, purge, inference, settings, content roots and roll-up.",
+   "summary": "/adobe/mev/api/v1: jobs, a ZIP download of selected runs, recipes, relationships, pulse, purge, run pins, inference, settings, content roots and roll-up.",
    "parts": [
     "ApiServlet",
     "RelationshipsServlet",
@@ -442,7 +454,8 @@
     "bundle-provenance@1",
     "osgi-settings@1",
     "local-bundle-runtime-evidence@1",
-    "bundle-publisher-inference@2"
+    "bundle-publisher-inference@2",
+    "client-libraries@1"
    ]
   },
   {
@@ -454,7 +467,8 @@
    "parts": [
     "repository-vitals@1",
     "index-complexity@1",
-    "blob-store@1"
+    "blob-store@1",
+    "blob-integrity@1"
    ]
   },
   {
@@ -499,7 +513,7 @@
    "parts": [
     "JobStore",
     "/var/cq-mev-helper/jobs/<recipe>/<uuid>/{metadata,snapshot,result}",
-    "purge (administrators only)"
+    "purge (administrators, and the scheduler before each phase)"
    ]
   },
   {
@@ -510,12 +524,14 @@
    "summary": "Deterministic checks over a sealed snapshot. No repository or runtime call.",
    "parts": [
     "osgi-stinks@8",
-    "content-stinks@6",
+    "content-stinks@7",
     "package-stinks@4",
     "sling-job-stinks@3",
     "htl-use-stinks@2",
-    "workflow-stinks@8",
-    "settings-stinks@3",
+    "workflow-stinks@9",
+    "settings-stinks@4",
+    "client-library-stinks@1",
+    "blob-integrity-stinks@1",
     "recipe grades (5 recipes)"
    ]
   },
@@ -595,17 +611,23 @@
    "id": "pinned-baselines",
    "label": "Pinned baselines",
    "group": "core",
-   "status": "designed",
+   "status": "built",
    "issue": 188,
-   "summary": "Pin a run as the baseline a diff compares against, so purge keeps it (#188)."
+   "summary": "An administrator pins a run so no purge deletes it, at most 5 per recipe, and a diff can compare against it (#188). Pending: change points, and a purge preview that says what each run is worth.",
+   "parts": [
+    "PurgeServlet (pins)"
+   ]
   },
   {
    "id": "scheduled-captures",
    "label": "Scheduled captures",
    "group": "core",
-   "status": "designed",
+   "status": "built",
    "issue": 189,
-   "summary": "Weekly around the full-compaction window, under the service user, never during compaction."
+   "summary": "Weekly around the full-compaction window, under the service user, never during compaction (#189). Off until an administrator enables it; before each phase it purges only the oldest unprotected runs, with a purge record.",
+   "parts": [
+    "ScheduledCaptures"
+   ]
   },
   {
    "id": "health-checks",
@@ -723,18 +745,20 @@
     "capture:installer"
    ],
    "diff": null,
-   "findings": "settings-stinks@3",
+   "findings": "settings-stinks@4",
    "guard": [
     "OsgiSettingsTest#sourceNeverReadsBeyondTheAllowlistOrInvokesAnything",
-    "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly"
+    "ServiceUsersTest#sourceReadsTheMappingKeyAndLooksAccountsUpByIdOnly",
+    "OsgiSettingsTest#externalIdentityLookupsSourceCallsOnlyTheTwoManagerLookups"
    ],
    "readsFrom": [
     "Allowlisted keys of a fixed list of configuration PIDs",
     "OSGi installer registrations and worker threads",
-    "Service-user mappings and their accounts"
+    "Service-user mappings and their accounts",
+    "Oak's identity provider and sync handler managers, asked by name"
    ],
-   "cost": "A fixed list of 22 PIDs, plus thread names",
-   "neverReads": "Keys outside the allowlist, secrets, the installer's resource list",
+   "cost": "A fixed list of 25 PIDs, plus thread names",
+   "neverReads": "Keys outside the allowlist, secrets, the installer's resource list, an identity provider or sync handler itself",
    "areas": [
     "configadmin",
     "service-users",
@@ -786,6 +810,32 @@
    "cost": "One paid request, after exact-payload review",
    "neverReads": "Everything but five manifest fields of one bundle. **Not usable: no keys**",
    "areas": []
+  },
+  {
+   "id": "client-libraries@1",
+   "name": "Client libraries",
+   "question": "Which client libraries can the HTML Library Manager build, what does each embed, and which large CSS builds does YUI minify?",
+   "layer": "osgi",
+   "card": "clientlibs",
+   "sealed": "submission",
+   "callerSession": "Client library folders under `/apps`, `/libs` and `/etc`",
+   "stages": [],
+   "diff": null,
+   "findings": "client-library-stinks@1",
+   "guard": [
+    "ClientLibrariesTest#theCaptureRunsOnlyItsIndexedQueryAndNeverCallsTheManagerOrReadsASource"
+   ],
+   "readsFrom": [
+    "One indexed query per allowed root for `cq:ClientLibraryFolder` nodes, run only when its EXPLAIN names an index",
+    "Each library's properties and its `css.txt` and `js.txt` lists",
+    "Each source's byte length",
+    "The HTML Library Manager's configuration, in memory"
+   ],
+   "cost": "One indexed query per root (5,000 rows, 100,000 resource reads, 20 s)",
+   "neverReads": "Source bodies; never calls the HTML Library Manager or builds a library; content outside `/apps`, `/libs` and `/etc`",
+   "areas": [
+    "clientlibs"
+   ]
   },
   {
    "id": "repository-vitals@1",
@@ -880,13 +930,38 @@
     "DataStore configuration PID identity",
     "The declared instance role",
     "Maintenance windows and their history",
-    "Oak's repository ID (the repository descriptor oak.clusterid)"
+    "Oak's repository ID (the repository descriptor oak.clusterid)",
+    "Revision GC's state (the segment store's revision GC bean and RepositoryManagement's RevisionGCStatus)"
    ],
    "cost": "JMX plus configuration PID identity and one repository descriptor",
    "neverReads": "MBean operations, configuration values, binaries, the maintenance history's message text",
    "areas": [
     "blob-store",
     "maintenance"
+   ]
+  },
+  {
+   "id": "blob-integrity@1",
+   "name": "Blob integrity",
+   "question": "Which data-store binaries under /libs and /apps no longer hash to their content address?",
+   "layer": "oak",
+   "card": "blobintegrity",
+   "sealed": "submission",
+   "callerSession": "Binary properties under `/libs` and `/apps`, and the optional roots you pick",
+   "stages": [],
+   "diff": null,
+   "findings": "blob-integrity-stinks@1",
+   "guard": [
+    "BlobIntegrityTest#theInventoryReadsContentIdentitiesOnlyAndNeverQueriesWritesOrAsksTheDataStore"
+   ],
+   "readsFrom": [
+    "The content identity of each binary property under `/libs` and `/apps`, and under `/conf`, `/content/dam`, `/var` and `/etc/packages` when you pick them",
+    "With the content-address check on: the bytes of data-store binaries under `/libs` and `/apps`"
+   ],
+   "cost": "Walks `/libs` and `/apps` (1,000,000 nodes, 20 s). The opt-in content-address check is the helper's first read of data-store binary bytes: at most 256 MiB, which can download objects into the local cache",
+   "neverReads": "`getReference`, an inventory export, a binary outside `/libs` and `/apps`, Oak's hidden index nodes, log text",
+   "areas": [
+    "binaries"
    ]
   },
   {
@@ -985,7 +1060,7 @@
    "callerSession": "Workflow instance trees, the models they name and those models' versions",
    "stages": [],
    "diff": null,
-   "findings": "workflow-stinks@8",
+   "findings": "workflow-stinks@9",
    "guard": [
     "WorkflowInstancesTest#sourceReadsFourPropertiesAndTheWorkItemsNameOnlyAndEachModelsStepTypes",
     "WorkflowVersionsTest#theModelVersionReaderReadsTheVersionByNameAndItsDateOnly"
@@ -1039,7 +1114,7 @@
    "callerSession": "`/conf` and one `/content` root",
    "stages": [],
    "diff": "cq-mev.content-stinks-diff.v1",
-   "findings": "content-stinks@6",
+   "findings": "content-stinks@7",
    "guard": [
     "ContentArchitectureSecurityTest#neverWritesQueriesOrUsesTheHelpersOwnServiceSession",
     "ContentArchitectureSecurityTest#readsOnlyThePinnedPropertiesAndChildren"
@@ -1298,7 +1373,7 @@
   },
   {
    "id": "f-capture",
-   "label": "Capture cards (13 in 5 groups)",
+   "label": "Capture cards (15 in 5 groups)",
    "blocks": [
     "console-ui",
     "api",
@@ -1838,6 +1913,24 @@
    "version": "v0.5.27",
    "date": "2026-10-17",
    "added": []
+  },
+  {
+   "version": "v0.5.28",
+   "date": "2026-10-19",
+   "added": []
+  },
+  {
+   "version": "v0.5.29",
+   "date": "2026-10-19",
+   "added": []
+  },
+  {
+   "version": "v0.5.30",
+   "date": "2026-10-19",
+   "added": [
+    "client-libraries@1",
+    "blob-integrity@1"
+   ]
   }
  ],
  "direction": {
